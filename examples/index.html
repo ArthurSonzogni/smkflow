@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SMKFlow examples</title>
+  </head>
+  <body>
+    <style>
+      * {
+        margin:0;
+        padding:0;
+      }
+      #selector {
+        display:block;
+        width:100%;
+        height:15vh;
+      }
+      #selector2  {
+        padding:20px;
+      }
+      #exampleContainer {
+        display:block;
+        width:100%;
+        height:100%;
+        border: 0px;
+        height:85vh;
+        background-color:black;
+      }
+      button,select {
+        padding:5px;
+      }
+    </style>
+    <div id="selector">
+      <div id="selector2">
+        <h1> SMKFlow examples </h1>
+        <label>Example:</label>
+        <select type=text id="selectBox" ></select>
+        <button id="previous">previous</button>
+        <button id="next">next</button>
+      </div>
+    </div>
+
+    <iframe id="exampleContainer" scrolling="no"></iframe>
+       
+    <script>
+      let main = async function() {
+        // We are modifying the dom, so we need to wait until the document to be
+        // ready
+        await new Promise(resolve => {
+          window.addEventListener("DOMContentLoaded", resolve)
+        });
+
+        let exampleList = [
+          "algebra.js",
+        ];
+
+        // Populate the example list.
+        let selectBox = document.querySelector("#selectBox");
+        for(let example of exampleList) {
+          let option = document.createElement("option");
+          option.innerText = example;
+          option.value = example;
+          selectBox.appendChild(option);
+        }
+
+        let onchange = function() {
+          let exampleContainer = document.querySelector("#exampleContainer");
+          exampleContainer.srcdoc = `
+            <style>
+              * {
+                padding:0;
+                margin:0;
+              }
+              canvas {
+                width: 100vw;
+                height: 100vh;
+              }
+            </style>
+            <script>
+              window.addEventListener("DOMContentLoaded", async function() {
+                // Build a canvas to display the example
+                let canvas = document.createElement("canvas");
+                document.body.appendChild(canvas);
+
+                // Load the example script.
+                await new Promise(resolve => {
+                  let script = document.createElement("script");
+                  script.src = '${selectBox.value}';
+                  script.addEventListener("load", resolve);
+                  document.body.appendChild(script);
+                });
+
+                main({
+                  canvas: canvas,
+                  print: console.log,
+                  printErr: console.error,
+                })
+
+                function onResize() {
+                  canvas.width = canvas.offsetWidth;
+                  canvas.height = canvas.offsetHeight;
+                }
+                onResize();
+                setTimeout(onResize, 100);
+                const resizeObserver = new ResizeObserver(onResize);
+                resizeObserver.observe(canvas);
+              });
+            </scr`+`ipt>
+          `;
+        };
+        
+        let previous = document.querySelector("#previous");
+        let next = document.querySelector("#next");
+        previous.onclick = function() {
+          selectBox.selectedIndex -=1;
+          onchange();
+        }
+        next.onclick = function() {
+          selectBox.selectedIndex +=1;
+          onchange();
+        }
+        selectBox.onchange = onchange;
+
+        onchange();
+      };
+
+      main();
+    </script>
+  </body>
+</html>
