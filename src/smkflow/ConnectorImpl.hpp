@@ -3,29 +3,36 @@
 
 #include <smk/RenderTarget.hpp>
 #include <smk/Transformable.hpp>
+#include <smkflow/Model.hpp>
+#include <smkflow/Elements.hpp>
 
 namespace smkflow {
 
-class Slot;
+class SlotImpl;
 
-class Connector {
+class ConnectorImpl : public Connector {
  public:
-  Connector(Slot* A, Slot* B);
-  ~Connector();
+  ConnectorImpl(SlotImpl* A, SlotImpl* B);
+  ~ConnectorImpl();
   bool IsConnected();
 
   void Disconnect();
   void DrawForeground(smk::RenderTarget* target);
   void DrawBackground(smk::RenderTarget* target);
 
-  Slot* input() { return input_; }
-  Slot* output() { return output_; }
+
+  SlotImpl* input() { return input_; }
+  SlotImpl* output() { return output_; }
+
+  // Connector implementations:
+  Slot* GetInput() override;
+  Slot* GetOutput() override;
 
  private:
   void RebuildVertex();
 
-  Slot* input_ = nullptr;
-  Slot* output_ = nullptr;
+  SlotImpl* input_ = nullptr;
+  SlotImpl* output_ = nullptr;
 
   smk::Transformable background_;
   smk::Transformable foreground_;

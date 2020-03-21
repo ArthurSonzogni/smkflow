@@ -2,9 +2,10 @@
 #include <smk/Input.hpp>
 #include <smk/Shape.hpp>
 #include <smkflow/BoardImpl.hpp>
-#include <smkflow/Connector.hpp>
-#include <smkflow/Node.hpp>
-#include <smkflow/Slot.hpp>
+#include <smkflow/ConnectorImpl.hpp>
+#include <smkflow/NodeImpl.hpp>
+#include <smkflow/SlotImpl.hpp>
+#include <smkflow/Constants.hpp>
 
 namespace smkflow {
 
@@ -17,17 +18,11 @@ BoardImpl::~BoardImpl() = default;
 
 BoardImpl::BoardImpl(const model::Board& model) {
   font_ = smk::Font(model.font, 30);
-  int x = 0;
-  int y = 0;
+}
 
-  for (const model::Node& node : model.nodes) {
-    nodes_.push_back(std::make_unique<Node>(this, node));
-    nodes_.back()->SetPosition({150 * x, 150 * y});
-
-    ++x;
-    y += x / 4;
-    x %= 4;
-  }
+NodeImpl* BoardImpl::Create(const model::Node& model) {
+  nodes_.push_back(std::make_unique<NodeImpl>(this, model));
+  return nodes_.back().get();
 }
 
 void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
@@ -86,7 +81,7 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
           connector_in_ + (start_slot_->IsRight() ? +strength : -strength);
       glm::vec2 connector_out_pushed = connector_out;
 
-      Slot* end_slot = FindSlot(cursor);
+      SlotImpl* end_slot = FindSlot(cursor);
       if (end_slot && end_slot->GetColor() == start_slot_->GetColor()) {
         connector_out = end_slot->GetPosition();
         connector_out_pushed =
@@ -113,10 +108,10 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
 
   if (input->IsCursorReleased()) {
     if (start_slot_) {
-      if (Slot* end_slot = FindSlot(cursor)) {
+      if (SlotImpl* end_slot = FindSlot(cursor)) {
         if (end_slot->GetColor() == start_slot_->GetColor()) {
           connectors_.push_back(
-              std::make_unique<Connector>(start_slot_, end_slot));
+              std::make_unique<ConnectorImpl>(start_slot_, end_slot));
         }
       }
       start_slot_ = nullptr;
@@ -134,7 +129,6 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
 
   for (const auto& node : nodes_)
     node->Draw(target);
-
   for (const auto& connector : connectors_)
     connector->DrawBackground(target);
   for (const auto& connector : connectors_)
@@ -153,16 +147,16 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
     auto background_ = smk::Shape::Path(bezier, 16);
     auto foreground_ = smk::Shape::Path(bezier, 10);
 
-    background_.SetColor({0.0, 0.0, 0.0, 0.3});
+    background_.SetColor(connector_background_color);
     foreground_.SetColor(start_slot_->GetColor());
     target->Draw(background_);
     target->Draw(foreground_);
   }
 }
 
-Slot* BoardImpl::FindSlot(const glm::vec2& position) {
+SlotImpl* BoardImpl::FindSlot(const glm::vec2& position) {
   for (auto& node : nodes_) {
-    Slot* slot = node->FindSlot(position);
+    SlotImpl* slot = node->FindSlot(position);
     if (slot)
       return slot;
   }

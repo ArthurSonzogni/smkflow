@@ -9,15 +9,16 @@ project(smkflow
 
 add_library(smkflow STATIC
   include/smkflow/Model.hpp
-  include/smkflow/Board.hpp
+  include/smkflow/Elements.hpp
   src/smkflow/BoardImpl.cpp
   src/smkflow/BoardImpl.hpp
-  src/smkflow/Connector.cpp
-  src/smkflow/Connector.hpp
-  src/smkflow/Node.cpp
-  src/smkflow/Node.hpp
-  src/smkflow/Slot.cpp
-  src/smkflow/Slot.hpp
+  src/smkflow/ConnectorImpl.cpp
+  src/smkflow/ConnectorImpl.hpp
+  src/smkflow/NodeImpl.cpp
+  src/smkflow/NodeImpl.hpp
+  src/smkflow/SlotImpl.cpp
+  src/smkflow/SlotImpl.hpp
+  src/smkflow/Constants.hpp
 )
 
 target_include_directories(smkflow

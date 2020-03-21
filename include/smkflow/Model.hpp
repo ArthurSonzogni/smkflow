@@ -14,6 +14,8 @@ struct Slot {
 };
 
 struct Node {
+  int identifier;
+
   std::string label;
   glm::vec4 color;
   std::vector<Slot> input;

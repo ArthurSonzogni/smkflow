@@ -6,32 +6,45 @@
 #include <smk/RenderTarget.hpp>
 #include <smk/Text.hpp>
 #include <smk/Transformable.hpp>
+#include <smkflow/Elements.hpp>
 #include <smkflow/Model.hpp>
+#include <smkflow/SlotImpl.hpp>
 #include <vector>
 
 namespace smkflow {
 
-class Slot;
-class Board;
+class SlotImpl;
 class BoardImpl;
 
-class Node {
+class NodeImpl : public Node {
  public:
-  Node(BoardImpl* board, const model::Node& model);
-  ~Node();
+  NodeImpl(BoardImpl* board, const model::Node& model);
+  ~NodeImpl();
   void Draw(smk::RenderTarget*);
 
   bool OnCursorPressed(glm::vec2);
   void OnCursorMoved(glm::vec2);
   void OnCursorReleased(glm::vec2);
 
-  void SetPosition(const glm::vec2& position);
   const glm::vec2& GetPosition();
 
-  Slot* FindSlot(const glm::vec2& position);
+  SlotImpl* FindSlot(const glm::vec2& position);
+
+  BoardImpl* board() { return board_; }
+
+  // Board implementation:
+  int Identifier() override { return identifier_; }
+  void SetPosition(const glm::vec2& position) override;
+  virtual int InputCount();
+  virtual Slot* InputAt(int i);
+  virtual int OutputCount();
+  virtual Slot* OutputAt(int i);
 
  private:
-  std::vector<std::unique_ptr<Slot>> slots_;
+  BoardImpl* board_;
+  int identifier_;
+  std::vector<std::unique_ptr<SlotImpl>> inputs_;
+  std::vector<std::unique_ptr<SlotImpl>> outputs_;
   glm::vec2 position_ = glm::vec2(0, 0);
   smk::Text title_;
   smk::Transformable title_base_;

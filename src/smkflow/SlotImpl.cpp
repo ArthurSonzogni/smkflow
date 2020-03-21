@@ -1,17 +1,19 @@
+#include <algorithm>
 #include <smk/Color.hpp>
 #include <smk/Shape.hpp>
 #include <smk/Transformable.hpp>
-#include <smkflow/Slot.hpp>
-#include <smkflow/Connector.hpp>
-#include <algorithm>
-#include <smkflow/Node.hpp>
+#include <smkflow/ConnectorImpl.hpp>
+#include <smkflow/Constants.hpp>
+#include <smkflow/NodeImpl.hpp>
+#include <smkflow/SlotImpl.hpp>
+#include <smkflow/BoardImpl.hpp>
 
 namespace smkflow {
 
 smk::Transformable circle;
 smk::Transformable circle_background;
 
-Slot::Slot(Node* node,
+SlotImpl::SlotImpl(NodeImpl* node,
            glm::vec2 position,
            smk::Text label,
            bool is_right,
@@ -25,15 +27,15 @@ Slot::Slot(Node* node,
   circle = smk::Shape::Circle(5);
 }
 
-glm::vec2 Slot::GetPosition() {
+glm::vec2 SlotImpl::GetPosition() {
   return node_->GetPosition() + position_;
 }
 
-void Slot::Draw(smk::RenderTarget* target) {
+void SlotImpl::Draw(smk::RenderTarget* target) {
   auto position = GetPosition();
 
   circle_background.SetPosition(position);
-  circle_background.SetColor({0, 0, 0, 0.2});
+  circle_background.SetColor(connector_background_color);
   target->Draw(circle_background);
 
   circle.SetPosition(position);
@@ -44,7 +46,7 @@ void Slot::Draw(smk::RenderTarget* target) {
   target->Draw(label_);
 }
 
-void Slot::Connect(Connector* connector) {
+void SlotImpl::Connect(ConnectorImpl* connector) {
   if (connector->output() == this) {
     while (!connectors_.empty())
       Disconnect(connectors_.back());
@@ -61,7 +63,7 @@ void Slot::Connect(Connector* connector) {
   // Disconnect(connector_);
   // connector_ = connector;
 }
-void Slot::Disconnect(Connector* connector) {
+void SlotImpl::Disconnect(ConnectorImpl* connector) {
   auto it = std::find(connectors_.begin(), connectors_.end(), connector);
   if (it == connectors_.end())
     return;
@@ -69,12 +71,43 @@ void Slot::Disconnect(Connector* connector) {
   connector->Disconnect();
 }
 
-bool Slot::IsRight() {
+bool SlotImpl::IsRight() {
   return is_right_;
 }
 
-glm::vec4 Slot::GetColor() {
+glm::vec4 SlotImpl::GetColor() {
   return color_;
+}
+
+void SlotImpl::SetText(const std::string text) {
+  label_ = smk::Text(node_->board()->font(), text);
+  auto center = label_.ComputeDimensions();
+  center.y *= 0.7;
+  if (IsRight())
+    center.x += 5;
+  else
+    center.x = -5;
+  label_.SetCenter(center);
+}
+
+Node* SlotImpl::GetNode() {
+  return node_;
+}
+
+Connector* SlotImpl::GetConnector() {
+  return connectors_.size() >= 1 ? connectors_[0] : nullptr;
+}
+
+Slot* SlotImpl::OppositeSlot() {
+  auto* connector = GetConnector();
+  return !connector ? nullptr
+                    : connector->GetInput() == this ? connector->GetOutput()
+                                                    : connector->GetInput();
+}
+
+Node* SlotImpl::OppositeNode() {
+  auto* opposite_slot = OppositeSlot();
+  return opposite_slot ? opposite_slot->GetNode() : nullptr;
 }
 
 }  // namespace smkflow
