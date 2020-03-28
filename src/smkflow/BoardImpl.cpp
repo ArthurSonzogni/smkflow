@@ -1,5 +1,4 @@
 #include <iostream>
-#include <smk/Input.hpp>
 #include <smk/Shape.hpp>
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/ConnectorImpl.hpp>
@@ -45,68 +44,83 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
       (input->cursor() - target->dimension() * 0.5f) * std::exp(view_zoom_) +
       view_shifting_;
 
-  if (input->IsCursorPressed()) {
-    // Set cursor.
-    start_slot_ = FindSlot(cursor);
-    if (start_slot_) {
-      connector_in_ = start_slot_->GetPosition();
-      connector_in_pushed_ = start_slot_->GetPosition();
-      connector_out_pushed_ = start_slot_->GetPosition();
-      connector_out_ = start_slot_->GetPosition();
-      return;
-    }
+  for (const auto& node : nodes_)
+    node->Step(input, cursor);
 
-    // Move node.
-    for (auto& node : nodes_) {
-      if (node->OnCursorPressed(cursor)) {
-        selected_node_ = node.get();
-        // Reorder moved node.
-        std::swap(node, nodes_.back());
-        return;
-      }
-    }
+  if (input->IsCursorPressed())
+    OnCursorPressed(input, cursor);
+  else if (input->IsCursorHold())
+    OnCursorHold(input, cursor);
+  else if (input->IsCursorReleased())
+    OnCursorReleased(cursor);
+  else
+    OnCursorStill(cursor);
+}
 
-    // Translation.
-    grab_point_ = view_shifting_ + input->cursor() * std::exp(view_zoom_);
-  }
-
-  if (input->IsCursorHold()) {
-    if (start_slot_) {
-      glm::vec2 connector_out = cursor;
-
-      float d = glm::distance(connector_in_, connector_out);
-      glm::vec2 strength(d * 0.4, 0);
-
-      glm::vec2 connector_in_pushed =
-          connector_in_ + (start_slot_->IsRight() ? +strength : -strength);
-      glm::vec2 connector_out_pushed = connector_out;
-
-      SlotImpl* end_slot = FindSlot(cursor);
-      if (end_slot && end_slot->GetColor() == start_slot_->GetColor()) {
-        connector_out = end_slot->GetPosition();
-        connector_out_pushed =
-            connector_out_ + (end_slot->IsRight() ? +strength : -strength);
-        connector_out_ += (connector_out - connector_out_) * 0.3f;
-      }
-      connector_out_ = connector_out;
-      connector_out_pushed_ +=
-          (connector_out_pushed - connector_out_pushed_) * 0.3f;
-      connector_in_pushed_ +=
-          (connector_in_pushed - connector_in_pushed_) * 0.3f;
-
-      return;
-    }
-
-    if (selected_node_) {
-      selected_node_->OnCursorMoved(cursor);
-      return;
-    }
-
-    view_shifting_ = grab_point_ - input->cursor() * std::exp(view_zoom_);
+void BoardImpl::OnCursorPressed(smk::Input* input, glm::vec2 cursor) {
+  // Set cursor.
+  start_slot_ = FindSlot(cursor);
+  if (start_slot_) {
+    connector_in_ = start_slot_->GetPosition();
+    connector_in_pushed_ = start_slot_->GetPosition();
+    connector_out_pushed_ = start_slot_->GetPosition();
+    connector_out_ = start_slot_->GetPosition();
     return;
   }
 
-  if (input->IsCursorReleased()) {
+  // Move node.
+  for (auto& node : nodes_) {
+    if (node->OnCursorPressed(cursor)) {
+      selected_node_ = node.get();
+      // Reorder to make selected_node_ to be displayed in front.
+      int i = 0;
+      while (nodes_[i].get() != selected_node_)
+        ++i;
+      while (++i != (int)nodes_.size())
+        std::swap(nodes_[i - 1], nodes_[i]);
+      return;
+    }
+  }
+
+  // Translation.
+  grab_point_ = view_shifting_ + input->cursor() * std::exp(view_zoom_);
+}
+
+void BoardImpl::OnCursorHold(smk::Input* input, glm::vec2 cursor) {
+  if (start_slot_) {
+    float d = glm::distance(connector_in_, cursor);
+    glm::vec2 strength(d * 0.4, 0);
+
+    glm::vec2 connector_in_pushed =
+        connector_in_ + (start_slot_->IsRight() ? +strength : -strength);
+    glm::vec2 connector_out_pushed = cursor;
+
+    SlotImpl* end_slot = FindSlot(cursor);
+    if (end_slot && end_slot != start_slot_ &&
+        end_slot->GetColor() == start_slot_->GetColor()) {
+      connector_out_ += (end_slot->GetPosition() - connector_out_) * 0.5f;
+      connector_out_pushed =
+          connector_out_ + (end_slot->IsRight() ? +strength : -strength);
+      connector_out_ += (connector_out_ - connector_out_) * 0.1f;
+    } else {
+      connector_out_ = cursor;
+    }
+    connector_out_pushed_ +=
+        (connector_out_pushed - connector_out_pushed_) * 0.1f;
+    connector_in_pushed_ += (connector_in_pushed - connector_in_pushed_) * 0.1f;
+
+    return;
+  }
+
+  if (selected_node_) {
+    selected_node_->OnCursorMoved(cursor);
+    return;
+  }
+
+  view_shifting_ = grab_point_ - input->cursor() * std::exp(view_zoom_);
+}
+
+void BoardImpl::OnCursorReleased(glm::vec2 cursor) {
     if (start_slot_) {
       if (SlotImpl* end_slot = FindSlot(cursor)) {
         if (end_slot->GetColor() == start_slot_->GetColor()) {
@@ -118,8 +132,9 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
     }
     selected_node_ = nullptr;
     return;
-  }
 }
+
+void BoardImpl::OnCursorStill(glm::vec2) {}
 
 void BoardImpl::Draw(smk::RenderTarget* target) {
   auto view = smk::View();

@@ -8,17 +8,20 @@ project(smkflow
 )
 
 add_library(smkflow STATIC
-  include/smkflow/Model.hpp
   include/smkflow/Elements.hpp
+  include/smkflow/Model.hpp
+  include/smkflow/Widget.hpp
   src/smkflow/BoardImpl.cpp
   src/smkflow/BoardImpl.hpp
   src/smkflow/ConnectorImpl.cpp
   src/smkflow/ConnectorImpl.hpp
+  src/smkflow/Constants.hpp
   src/smkflow/NodeImpl.cpp
   src/smkflow/NodeImpl.hpp
   src/smkflow/SlotImpl.cpp
   src/smkflow/SlotImpl.hpp
-  src/smkflow/Constants.hpp
+  src/smkflow/widget/InputBoxImpl.cpp
+  src/smkflow/widget/Widget.cpp
 )
 
 target_include_directories(smkflow

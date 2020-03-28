@@ -3,7 +3,7 @@ include(FetchContent)
 set(FETCHCONTENT_UPDATES_DISCONNECTED false)
 FetchContent_Declare(smk
   GIT_REPOSITORY https://github.com/ArthurSonzogni/smk
-  GIT_TAG 3289300bfb875561c9d5387451373a43ec8422f3
+  GIT_TAG 90ff3a630c06eef586c653a6ac20381c914a755e
 )
 
 FetchContent_GetProperties(smk)

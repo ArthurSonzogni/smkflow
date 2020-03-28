@@ -13,6 +13,7 @@ float title_height = 48;
 float padding = 10;
 
 NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
+  color_ = model.color;
   identifier_ = model.identifier;
   width_ = 0.f;   // 32.f;
   height_ = 0.f;  // 32.f;
@@ -20,55 +21,98 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
   title_ = smk::Text(board->font(), model.label);
   title_.SetColor(smk::Color::Black);
 
+  for(const auto& model: model.input) {
+    auto slot = std::make_unique<SlotImpl>(this, model.label, false, model.color);
+    inputs_.push_back(std::move(slot));
+  }
+
+  for (const auto& model : model.output) {
+    auto slot = std::make_unique<SlotImpl>(this, model.label, true,
+                                           model.color);
+    outputs_.push_back(std::move(slot));
+  }
+
+  for (const auto& model : model.widgets)
+    widgets_.push_back(model(this));
+
+  Layout();
+}
+
+void NodeImpl::Layout() {
+  // Compute the dimensions ----------------------------------------------------
   auto title_dimension = title_.ComputeDimensions();
-  width_ = title_dimension.x + 2 * padding;
-  height_ = title_dimension.y + 2 * padding;
+
+  float widget_width = 0.f;
+  float widget_height = 0.f;
+  for (const auto& widget : widgets_) {
+    auto dimensions = widget->ComputeDimensions();
+    widget->SetDimensions(dimensions);
+    widget_width = std::max(widget_width, dimensions.x);
+    widget_height += dimensions.y;
+  }
 
   float input_width = 0.f;
-  for (const auto& slot : model.input) {
-    auto label = smk::Text(board->font(), slot.label);
-    input_width = std::max(input_width, label.ComputeDimensions().x);
+  float input_height = 0.f;
+  for (const auto& slot : inputs_) {
+    auto dimension = slot->ComputeDimensions();
+    input_width = std::max(input_width, dimension.x);
+    input_height += dimension.y;
   }
 
   float output_width = 0.f;
-  for (const auto& slot : model.output) {
-    auto label = smk::Text(board->font(), slot.label);
-    output_width = std::max(output_width, label.ComputeDimensions().x);
+  float output_height = 0.f;
+  for (const auto& slot : outputs_) {
+    auto dimension = slot->ComputeDimensions();
+    output_width = std::max(output_width, dimension.x);
+    output_height += dimension.y;
   }
 
-  float input_output_y_start = title_height + padding;
-  {
-    float x = 0.f;
-    float y = input_output_y_start;
-    for (const auto& slot : model.input) {
-      auto label = smk::Text(board->font(), slot.label);
-      auto dimension = label.ComputeDimensions();
-      x = 0.f;
-      y += dimension.y * 0.5f;
-      label.SetCenter(-padding, dimension.y * 0.5f);
-      inputs_.push_back(std::make_unique<SlotImpl>(
-          this, glm::vec2(x, y), std::move(label), false, slot.color));
-      input_width = std::max(input_width, padding + dimension.x + padding);
-      y += dimension.y * 0.5f + padding;
-    }
-    height_ = std::max(height_, y);
+  input_width += padding;
+  output_width += padding;
+  widget_width = std::max(widget_width, title_dimension.x - input_width -
+                                            output_height + 2 * padding);
+
+  const float x_a = 0.f;
+  const float x_b = x_a + input_width;
+  const float x_c = x_b + widget_width;
+  const float x_d = x_c + output_width;
+
+  const float y_a = 0.f;
+  const float y_b = y_a + title_height + padding;
+  const float y_c =
+      y_b + std::max(input_height, std::max(widget_height, output_height));
+
+  width_ = x_d;
+  height_ = y_c;
+
+  float x, y;
+  x = x_a;
+  y = y_b + board_->font().size() * 0.5f;
+  for (auto& slot : inputs_) {
+    slot->SetPosition({x, y});
+    auto dimension = slot->ComputeDimensions();
+    y += dimension.y;
   }
 
-  width_ = std::max(width_, input_width + padding + output_width);
-  {
-    float x = width_;
-    float y = input_output_y_start;
-    for (const auto& slot : model.output) {
-      auto label = smk::Text(board->font(), slot.label);
-      auto dimension = label.ComputeDimensions();
-      y += dimension.y * 0.5f;
-      label.SetCenter(padding + dimension.x, dimension.y * 0.5f);
-      outputs_.push_back(std::make_unique<SlotImpl>(
-          this, glm::vec2(x, y), std::move(label), true, slot.color));
-      y += dimension.y * 0.5f + padding;
-    }
-    height_ = std::max(height_, y);
+  x = x_d;
+  y = y_b + board_->font().size() * 0.5f;
+  for (auto& slot : outputs_) {
+    auto dimension = slot->ComputeDimensions();
+    slot->SetPosition({x, y});
+    y += dimension.y;
   }
+
+  x = x_b;
+  y = y_b;
+  for(auto& widget : widgets_) {
+    auto dimensions = widget->ComputeDimensions();
+    widget->SetPosition({x, y});
+    widget->SetDimensions({widget_width, dimensions.y});
+    y += dimensions.y;
+  }
+
+  width_ = x_d;
+  height_ = y_c;
 
   base_ = smk::Shape::RoundedRectangle(width_, height_, 10);
   base_.SetCenter(-width_ * 0.5, -height_ * 0.5);
@@ -76,10 +120,11 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
 
   title_base_ = smk::Shape::RoundedRectangle(width_, title_height, 10);
   title_base_.SetCenter(-width_ * 0.5, -title_height * 0.5);
-  title_base_.SetColor(model.color * 0.8f);
+  title_base_.SetColor(color_ * 0.8f);
 }
 
 NodeImpl::~NodeImpl() = default;
+
 void NodeImpl::Draw(smk::RenderTarget* target) {
   base_.SetPosition(position_);
   title_base_.SetPosition(position_);
@@ -88,11 +133,28 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
   target->Draw(base_);
   target->Draw(title_base_);
   target->Draw(title_);
-
   for (auto& slot : inputs_)
     slot->Draw(target);
   for (auto& slot : outputs_)
     slot->Draw(target);
+  for(auto& widget : widgets_)
+    widget->Draw(target);
+}
+
+void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
+  for(auto& widget : widgets_)
+    widget->Step(input, cursor);
+
+  bool relayout = false;
+  for (auto& slot : inputs_)
+    relayout |= slot->ValidateDimensions();
+  for (auto& slot : outputs_)
+    relayout |= slot->ValidateDimensions();
+  for (auto& widget : widgets_)
+    relayout |= widget->ValidateDimensions();
+
+  if (relayout)
+    Layout();
 }
 
 bool NodeImpl::OnCursorPressed(glm::vec2 cursor) {
@@ -145,6 +207,12 @@ int NodeImpl::OutputCount() {
 }
 Slot* NodeImpl::OutputAt(int i) {
   return outputs_.at(i).get();
+}
+int NodeImpl::WidgetCount() {
+  return widgets_.size();
+}
+Widget* NodeImpl::WidgetAt(int i) {
+  return widgets_.at(i).get();
 }
 
 }  // namespace smkflow

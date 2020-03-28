@@ -12,6 +12,7 @@ class Board;
 class Node;
 class Slot;
 class Connector;
+class Widget;
 
 class Board {
  public:
@@ -41,7 +42,7 @@ class Slot {
 
   virtual Node* GetNode() = 0;
   virtual Node* OppositeNode() = 0;
-  virtual void SetText(const std::string text) = 0;
+  virtual void SetText(const std::string& text) = 0;
 };
 
 class Connector {
@@ -60,6 +61,9 @@ class Node {
 
   virtual int OutputCount() = 0;
   virtual Slot* OutputAt(int i) = 0;
+
+  virtual int WidgetCount() = 0;
+  virtual Widget* WidgetAt(int i) = 0;
 };
 
 }  // namespace smkflow

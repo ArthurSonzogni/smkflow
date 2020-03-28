@@ -2,6 +2,7 @@
 #define SMKFLOW_MODEL_HPP
 
 #include <glm/glm.hpp>
+#include <smkflow/Widget.hpp>
 #include <string>
 #include <vector>
 
@@ -19,6 +20,7 @@ struct Node {
   std::string label;
   glm::vec4 color;
   std::vector<Slot> input;
+  std::vector<WidgetFactory> widgets;
   std::vector<Slot> output;
 };
 

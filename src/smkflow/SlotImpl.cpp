@@ -14,17 +14,17 @@ smk::Transformable circle;
 smk::Transformable circle_background;
 
 SlotImpl::SlotImpl(NodeImpl* node,
-           glm::vec2 position,
-           smk::Text label,
-           bool is_right,
-           glm::vec4 color)
-    : node_(node),
-      position_(position),
-      label_(label),
-      is_right_(is_right),
-      color_(color) {
+                   std::string label,
+                   bool is_right,
+                   glm::vec4 color)
+    : node_(node), is_right_(is_right), color_(color) {
   circle_background = smk::Shape::Circle(8);
   circle = smk::Shape::Circle(5);
+  SetText(label);
+}
+
+glm::vec2 SlotImpl::ComputeDimensions() {
+  return label_.ComputeDimensions();
 }
 
 glm::vec2 SlotImpl::GetPosition() {
@@ -44,6 +44,12 @@ void SlotImpl::Draw(smk::RenderTarget* target) {
 
   label_.SetPosition(position);
   target->Draw(label_);
+}
+
+bool SlotImpl::ValidateDimensions() {
+  bool ret = dimensions_modified_;
+  dimensions_modified_ = false;
+  return ret;
 }
 
 void SlotImpl::Connect(ConnectorImpl* connector) {
@@ -79,7 +85,7 @@ glm::vec4 SlotImpl::GetColor() {
   return color_;
 }
 
-void SlotImpl::SetText(const std::string text) {
+void SlotImpl::SetText(const std::string& text) {
   label_ = smk::Text(node_->board()->font(), text);
   auto center = label_.ComputeDimensions();
   center.y *= 0.7;
@@ -88,6 +94,7 @@ void SlotImpl::SetText(const std::string text) {
   else
     center.x = -5;
   label_.SetCenter(center);
+  dimensions_modified_ = true;
 }
 
 Node* SlotImpl::GetNode() {

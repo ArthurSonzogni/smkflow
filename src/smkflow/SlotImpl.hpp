@@ -15,13 +15,13 @@ class NodeImpl;
 
 class SlotImpl : public Slot {
  public:
-  SlotImpl(NodeImpl* node,
-           glm::vec2 position,
-           smk::Text label,
-           bool is_right,
-           glm::vec4 color);
+  SlotImpl(NodeImpl* node, std::string label, bool is_right, glm::vec4 color);
+  void SetPosition(const glm::vec2 position) { position_ = position; }
+  glm::vec2 ComputeDimensions();
   void Draw(smk::RenderTarget* target);
   glm::vec2 GetPosition();
+
+  bool ValidateDimensions();
 
   void Connect(ConnectorImpl* connector_);
   void Disconnect(ConnectorImpl* connector_);
@@ -31,13 +31,14 @@ class SlotImpl : public Slot {
   NodeImpl* node() { return node_; }
 
   // Slot implementation:
-  void SetText(const std::string text) override;
+  void SetText(const std::string& text) override;
   Node* GetNode() override;
   Connector* GetConnector() override;
   Slot* OppositeSlot() override;
   Node* OppositeNode() override;
 
  private:
+  bool dimensions_modified_= false;
   NodeImpl* node_;  // Owner;
   glm::vec2 position_;
   smk::Text label_;

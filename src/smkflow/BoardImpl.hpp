@@ -28,6 +28,11 @@ class BoardImpl : public Board {
   NodeImpl* NodeAt(int i) override { return nodes_.at(i).get(); }
 
  private:
+  void OnCursorPressed(smk::Input* input, glm::vec2 cursor);
+  void OnCursorHold(smk::Input* input, glm::vec2 cursor);
+  void OnCursorReleased(glm::vec2 cursor);
+  void OnCursorStill(glm::vec2 cursor);
+
   std::vector<std::unique_ptr<NodeImpl>> nodes_;
   std::vector<std::unique_ptr<ConnectorImpl>> connectors_;
   NodeImpl* selected_node_ = nullptr;
