@@ -44,3 +44,8 @@ target_link_libraries(smkflow PUBLIC smk)
 set_target_properties(smkflow PROPERTIES CXX_STANDARD 17)
 
 add_subdirectory(examples)
+
+# Export the library.
+add_library(smkflow::smkflow ALIAS smkflow)
+export(TARGETS smkflow NAMESPACE smkflow::
+  FILE ${PROJECT_BINARY_DIR}/smkflow-targets.cmake)
