@@ -19,7 +19,7 @@ class BoardImpl;
 class NodeImpl : public Node {
  public:
   NodeImpl(BoardImpl* board, const model::Node& model);
-  ~NodeImpl();
+  ~NodeImpl() override;
 
   static NodeImpl* From(Node* node) { return static_cast<NodeImpl*>(node); }
 

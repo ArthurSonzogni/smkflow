@@ -17,11 +17,10 @@ class Widget;
 class Board {
  public:
   static std::unique_ptr<Board> Create(const model::Board&);
+  virtual ~Board() = default;
 
   virtual Node* Create(const model::Node&) = 0;
   //virtual void Insert(std::unique_ptr<Node>) = 0;
-
-  virtual ~Board() = default;
 
   // Called 60/s for animations:
   virtual void Step(smk::RenderTarget* target, smk::Input* input) = 0;
@@ -36,6 +35,8 @@ class Board {
 
 class Slot {
  public:
+  virtual ~Slot() = default;
+
   virtual Connector* GetConnector() = 0;
 
   virtual Slot* OppositeSlot() = 0;
@@ -47,12 +48,16 @@ class Slot {
 
 class Connector {
  public:
+  virtual ~Connector() = default;
+
   virtual Slot* GetInput() = 0;
   virtual Slot* GetOutput() = 0;
 };
 
 class Node {
  public:
+  virtual ~Node() = default;
+
   virtual int Identifier() = 0;
   virtual void SetPosition(const glm::vec2&) = 0;
 

@@ -30,6 +30,7 @@ class InputBox {
 class Widget {
  public:
   Widget(Node* node) : node_(node) {}
+  virtual ~Widget() = default;
   void SetPosition(glm::vec2 position) { position_ = position; }
   glm::vec2 PositionInWidget() { return position_; }
   glm::vec2 Position();

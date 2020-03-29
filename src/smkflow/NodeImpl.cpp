@@ -32,8 +32,8 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
     outputs_.push_back(std::move(slot));
   }
 
-  for (const auto& model : model.widgets)
-    widgets_.push_back(model(this));
+  for (const auto& builder : model.widgets)
+    widgets_.push_back(builder(this));
 
   Layout();
 }
