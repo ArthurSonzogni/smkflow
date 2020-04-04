@@ -1,10 +1,9 @@
 #include "smkflow/ConnectorImpl.hpp"
 
-#include <smk/Color.hpp>
 #include <smk/Shape.hpp>
+#include <smkflow/Constants.hpp>
 
 #include "smkflow/SlotImpl.hpp"
-#include <smkflow/Constants.hpp>
 
 namespace smkflow {
 
@@ -73,11 +72,15 @@ void ConnectorImpl::RebuildVertex() {
   background_ = smk::Shape::Path(bezier, 16);
   foreground_ = smk::Shape::Path(bezier, 10);
 
-  background_.SetColor(connector_background_color);
+  background_.SetColor(color::connector_background);
   foreground_.SetColor(input_->GetColor());
 }
 
-Slot* ConnectorImpl::GetInput() { return input_; }
-Slot* ConnectorImpl::GetOutput() { return output_; }
+Slot* ConnectorImpl::GetInput() {
+  return input_;
+}
+Slot* ConnectorImpl::GetOutput() {
+  return output_;
+}
 
 }  // namespace smkflow

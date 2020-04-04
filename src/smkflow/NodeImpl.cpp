@@ -1,7 +1,8 @@
-#include <smk/Color.hpp>
+#include <iostream>
 #include <smk/Font.hpp>
 #include <smk/Shape.hpp>
 #include <smkflow/BoardImpl.hpp>
+#include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
 
@@ -19,7 +20,7 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
   height_ = 0.f;  // 32.f;
 
   title_ = smk::Text(board->font(), model.label);
-  title_.SetColor(smk::Color::Black);
+  title_.SetColor(color::text);
 
   for(const auto& model: model.input) {
     auto slot = std::make_unique<SlotImpl>(this, model.label, false, model.color);
@@ -48,7 +49,7 @@ void NodeImpl::Layout() {
     auto dimensions = widget->ComputeDimensions();
     widget->SetDimensions(dimensions);
     widget_width = std::max(widget_width, dimensions.x);
-    widget_height += dimensions.y;
+    widget_height += dimensions.y + size::widget_margin;
   }
 
   float input_width = 0.f;
@@ -56,7 +57,7 @@ void NodeImpl::Layout() {
   for (const auto& slot : inputs_) {
     auto dimension = slot->ComputeDimensions();
     input_width = std::max(input_width, dimension.x);
-    input_height += dimension.y;
+    input_height += dimension.y + size::widget_margin;
   }
 
   float output_width = 0.f;
@@ -64,7 +65,7 @@ void NodeImpl::Layout() {
   for (const auto& slot : outputs_) {
     auto dimension = slot->ComputeDimensions();
     output_width = std::max(output_width, dimension.x);
-    output_height += dimension.y;
+    output_height += dimension.y + size::widget_margin;
   }
 
   input_width += padding;
@@ -87,19 +88,19 @@ void NodeImpl::Layout() {
 
   float x, y;
   x = x_a;
-  y = y_b + board_->font().size() * 0.5f;
+  y = y_b + board_->font().line_height() * 0.5f;
   for (auto& slot : inputs_) {
     slot->SetPosition({x, y});
     auto dimension = slot->ComputeDimensions();
-    y += dimension.y;
+    y += dimension.y + size::widget_margin;
   }
 
   x = x_d;
-  y = y_b + board_->font().size() * 0.5f;
+  y = y_b + board_->font().line_height() * 0.5f;
   for (auto& slot : outputs_) {
     auto dimension = slot->ComputeDimensions();
     slot->SetPosition({x, y});
-    y += dimension.y;
+    y += dimension.y + size::widget_margin;
   }
 
   x = x_b;
@@ -108,7 +109,7 @@ void NodeImpl::Layout() {
     auto dimensions = widget->ComputeDimensions();
     widget->SetPosition({x, y});
     widget->SetDimensions({widget_width, dimensions.y});
-    y += dimensions.y;
+    y += dimensions.y + size::widget_margin;
   }
 
   width_ = x_d;
@@ -116,11 +117,11 @@ void NodeImpl::Layout() {
 
   base_ = smk::Shape::RoundedRectangle(width_, height_, 10);
   base_.SetCenter(-width_ * 0.5, -height_ * 0.5);
-  base_.SetColor({0.5, 0.5, 0.5, 0.5});
+  base_.SetColor(color::node_background);
 
   title_base_ = smk::Shape::RoundedRectangle(width_, title_height, 10);
   title_base_.SetCenter(-width_ * 0.5, -title_height * 0.5);
-  title_base_.SetColor(color_ * 0.8f);
+  title_base_.SetColor(color_);
 }
 
 NodeImpl::~NodeImpl() = default;
@@ -142,8 +143,9 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
 }
 
 void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
-  for(auto& widget : widgets_)
-    widget->Step(input, cursor);
+  if (input->IsCursorReleased()) {
+    cursor_captured_.reset();
+  }
 
   bool relayout = false;
   for (auto& slot : inputs_)
@@ -155,24 +157,23 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
 
   if (relayout)
     Layout();
-}
 
-bool NodeImpl::OnCursorPressed(glm::vec2 cursor) {
+  for(auto& widget : widgets_)
+    widget->Step(input, cursor);
+
   bool hover = cursor.x > position_.x && cursor.x < position_.x + width_ &&
                cursor.y > position_.y && cursor.y < position_.y + height_;
 
-  if (!hover)
-    return false;
+  if (input->IsCursorPressed() && hover) {
+    cursor_captured_ = board_->CaptureCursor();
+    cursor_drag_point = position_ - cursor;
+  }
 
-  cursor_drag_point = position_ - cursor;
-  return true;
-}
-
-void NodeImpl::OnCursorMoved(glm::vec2 cursor) {
+  if (!cursor_captured_)
+    return;
+  
   position_ = cursor_drag_point + cursor;
 }
-
-void NodeImpl::OnCursorReleased(glm::vec2) {}
 
 void NodeImpl::SetPosition(const glm::vec2& position) {
   position_ = position;
@@ -194,6 +195,10 @@ SlotImpl* NodeImpl::FindSlot(const glm::vec2& position) {
       return slot.get();
   }
   return nullptr;
+}
+
+Board* NodeImpl::GetBoard() {
+  return board_;
 }
 
 int NodeImpl::InputCount() {

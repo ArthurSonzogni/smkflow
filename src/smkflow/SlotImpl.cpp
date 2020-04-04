@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <smk/Color.hpp>
 #include <smk/Shape.hpp>
 #include <smk/Transformable.hpp>
 #include <smkflow/ConnectorImpl.hpp>
@@ -7,6 +6,7 @@
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
 #include <smkflow/BoardImpl.hpp>
+#include <smkflow/Constants.hpp>
 
 namespace smkflow {
 
@@ -24,7 +24,9 @@ SlotImpl::SlotImpl(NodeImpl* node,
 }
 
 glm::vec2 SlotImpl::ComputeDimensions() {
-  return label_.ComputeDimensions();
+  auto dimensions = label_.ComputeDimensions();
+  dimensions.y = std::max(dimensions.y, size::widget_height);
+  return dimensions;
 }
 
 glm::vec2 SlotImpl::GetPosition() {
@@ -35,7 +37,7 @@ void SlotImpl::Draw(smk::RenderTarget* target) {
   auto position = GetPosition();
 
   circle_background.SetPosition(position);
-  circle_background.SetColor(connector_background_color);
+  circle_background.SetColor(color::connector_background);
   target->Draw(circle_background);
 
   circle.SetPosition(position);
@@ -88,7 +90,7 @@ glm::vec4 SlotImpl::GetColor() {
 void SlotImpl::SetText(const std::string& text) {
   label_ = smk::Text(node_->board()->font(), text);
   auto center = label_.ComputeDimensions();
-  center.y *= 0.7;
+  center.y *= 0.5;
   if (IsRight())
     center.x += 5;
   else

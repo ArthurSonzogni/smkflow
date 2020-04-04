@@ -1,4 +1,3 @@
-#include <iostream>
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
 #include <smk/Shape.hpp>
@@ -7,20 +6,14 @@
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/Widget.hpp>
+#include <smkflow/Constants.hpp>
 
 namespace smkflow {
 
-namespace {
-const auto color = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
-const auto color_hover = glm::vec4(0.4f, 0.4f, 0.4f, 0.6f);
-const auto color_focus = glm::vec4(0.1f, 0.1f, 0.1f, 0.8f);
-const float margin = 2.f;
-}  // namespace
-
 class InputBoxImpl : public Widget, public InputBox {
  public:
-  InputBoxImpl(Node* node, int value)
-      : Widget(node), input_(std::to_string(value)) {
+  InputBoxImpl(Node* node, const std::string& value)
+      : Widget(node), input_(value) {
     square_ = smk::Shape::Square();
     square_.SetScale({128.f, 32.f});
     SetText();
@@ -28,8 +21,9 @@ class InputBoxImpl : public Widget, public InputBox {
 
   void SetText() {
     text_ = smk::Text(Font(), input_.empty() ? "..." : input_);
-    auto text_dimensions = text_.ComputeDimensions();
-    computed_dimensions_ = text_dimensions + glm::vec2(margin * 2, margin * 2);
+    computed_dimensions_ = text_.ComputeDimensions();
+    computed_dimensions_.y =
+        std::max(computed_dimensions_.y, size::widget_height);
     InvalidateDimensions();
   }
 
@@ -39,19 +33,19 @@ class InputBoxImpl : public Widget, public InputBox {
   glm::vec2 ComputeDimensions() override { return computed_dimensions_; }
 
   void Step(smk::Input* input, const glm::vec2& cursor) override {
-    auto position = cursor - Position() - glm::vec2(margin, margin);
-    hover = (position.x >= 0.f && position.y >= 0.f &&
+    auto position = cursor - Position();
+    hover_ = (position.x >= 0.f && position.y >= 0.f &&
              position.x <= dimensions().x && position.y <= dimensions().y);
 
     if (input->IsCursorPressed())
-      focus = false;
+      focus_ = false;
 
-    if (input->IsCursorReleased() && hover) {
+    if (input->IsCursorReleased() && hover_) {
       character_listener_ = input->MakeCharacterListener();
-      focus = true;
+      focus_ = true;
     }
 
-    if (focus) {
+    if (focus_) {
       bool modified = false;
       wchar_t character;
       while(character_listener_->Receive(&character)) {
@@ -71,13 +65,16 @@ class InputBoxImpl : public Widget, public InputBox {
     auto position = Position();
     auto dimension = dimensions();
 
-    square_.SetPosition(position + glm::vec2(margin, margin));
-    square_.SetScale(dimension - glm::vec2(margin*2, margin*2));
-    square_.SetColor(focus ? color_focus : hover ? color_hover : color);
+    square_.SetPosition(position);
+    square_.SetScale(dimension);
+    square_.SetColor(focus_ ? color::widget_background_focus
+                            : hover_ ? color::widget_background_hover
+                                     : color::widget_background);
     target->Draw(square_);
 
-    text_.SetPosition(position +
-                      glm::vec2(margin, margin - dimension.y * 0.1f));
+    text_.SetPosition(
+        position +
+        glm::vec2(3.f, dimension.y * 0.5f - computed_dimensions_.y * 0.5f));
     target->Draw(text_);
   }
 
@@ -90,8 +87,8 @@ class InputBoxImpl : public Widget, public InputBox {
 
  private:
   glm::vec2 computed_dimensions_;
-  bool focus = false;
-  bool hover = false;
+  bool focus_ = false;
+  bool hover_ = false;
   smk::Text text_;
   std::string input_;
   smk::Transformable square_;
@@ -99,12 +96,12 @@ class InputBoxImpl : public Widget, public InputBox {
 };
 
 // static
-WidgetFactory InputBox::Create(int initial_value) {
+WidgetFactory InputBox::Create(const std::string& initial_value) {
   return [initial_value](Node* node) {
     return std::make_unique<InputBoxImpl>(node, initial_value);
   };
 }
-  
+
 // static
 InputBox* InputBox::From(Widget* w) {
   return dynamic_cast<InputBox*>(w);

@@ -8,6 +8,7 @@ project(smkflow
 )
 
 add_library(smkflow STATIC
+  include/smkflow/Constants.hpp
   include/smkflow/Elements.hpp
   include/smkflow/Model.hpp
   include/smkflow/Widget.hpp
@@ -15,12 +16,12 @@ add_library(smkflow STATIC
   src/smkflow/BoardImpl.hpp
   src/smkflow/ConnectorImpl.cpp
   src/smkflow/ConnectorImpl.hpp
-  src/smkflow/Constants.hpp
   src/smkflow/NodeImpl.cpp
   src/smkflow/NodeImpl.hpp
   src/smkflow/SlotImpl.cpp
   src/smkflow/SlotImpl.hpp
   src/smkflow/widget/InputBoxImpl.cpp
+  src/smkflow/widget/SliderImpl.cpp
   src/smkflow/widget/Widget.cpp
 )
 add_library(smkflow::smkflow ALIAS smkflow)
@@ -41,7 +42,8 @@ target_compile_options(smkflow
   -Wextra
 )
 
-target_link_libraries(smkflow PUBLIC smk)
+target_link_libraries(smkflow PUBLIC smk::smk)
+target_link_libraries(smkflow PRIVATE fmt::fmt)
 set_target_properties(smkflow PROPERTIES CXX_STANDARD 17)
 
 add_subdirectory(examples)

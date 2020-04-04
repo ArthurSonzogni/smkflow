@@ -43,3 +43,4 @@ function(add_example target input)
 endfunction(add_example)
 
 add_example(algebra algebra.cpp)
+add_example(widget_gallery widget_gallery.cpp)

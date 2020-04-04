@@ -19,10 +19,23 @@ using WidgetFactory = std::function<std::unique_ptr<Widget>(Node*)>;
 
 class InputBox {
  public:
-  static WidgetFactory Create(int initial_value);
+  static WidgetFactory Create(const std::string& value);
   static InputBox* From(Widget*);
   virtual void SetValue(const std::string& value) = 0;
   virtual const std::string& GetValue() = 0;
+};
+
+// -----------------------------------------------------------------------------
+
+class Slider {
+ public:
+  static WidgetFactory Create(float min = 0.f,
+                              float max = 100.f,
+                              float value = 50.f,
+                              std::string format = "{:.0f}%"); // Use fmt lib.
+  static Slider* From(Widget*);
+  virtual void SetValue(float) = 0;
+  virtual float GetValue() = 0;
 };
 
 // -----------------------------------------------------------------------------

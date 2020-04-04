@@ -1,6 +1,7 @@
 #include <iostream>
 #include <smk/Color.hpp>
 #include <smk/Window.hpp>
+#include <smkflow/Constants.hpp>
 #include <smkflow/Elements.hpp>
 #include <smkflow/Model.hpp>
 #include <smkflow/Widget.hpp>
@@ -16,8 +17,8 @@ enum Node {
 };
 
 auto type_number = glm::vec4(1.f, 0.5f, 0.5f, 1.f);
-auto node_color = glm::vec4(1.0f, 1.f, 1.f, 1.f);
-auto node_color_number = glm::vec4(1.0, 0.5, 0.5, 1.f);
+auto node_color = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
+auto node_color_number = glm::vec4(0.5, 0.25f, 0.25f, 1.f);
 
 auto node_add = smkflow::model::Node{
     Node::Add,
@@ -28,8 +29,8 @@ auto node_add = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create(0.f),
-        smkflow::InputBox::Create(0.f),
+        smkflow::InputBox::Create("0.0"),
+        smkflow::InputBox::Create("0.0"),
     },
     {
         {"out", type_number},
@@ -45,8 +46,8 @@ auto node_substract = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create(0.f),
-        smkflow::InputBox::Create(0.f),
+        smkflow::InputBox::Create("0.0"),
+        smkflow::InputBox::Create("0.0"),
     },
     {
         {"out", type_number},
@@ -62,8 +63,8 @@ auto node_multiply = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create(0.f),
-        smkflow::InputBox::Create(0.f),
+        smkflow::InputBox::Create("0.0"),
+        smkflow::InputBox::Create("0.0"),
     },
     {
         {"out", type_number},
@@ -79,8 +80,8 @@ auto node_divide = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create(0.f),
-        smkflow::InputBox::Create(0.f),
+        smkflow::InputBox::Create("0.0"),
+        smkflow::InputBox::Create("0.0"),
     },
     {
         {"", type_number},
@@ -93,7 +94,7 @@ auto node_number = smkflow::model::Node{
     node_color_number,
     {},
     {
-        smkflow::InputBox::Create(0.f),
+        smkflow::Slider::Create(-20.f, 20.f),
     },
     {
         {"out", type_number},
@@ -118,8 +119,8 @@ void UpdateValues(smkflow::Board* board) {
     smkflow::Node* node = board->NodeAt(i);
     int value = 0;
     if (node->Identifier() == Number) {
-      smkflow::InputBox* input = smkflow::InputBox::From(node->WidgetAt(0));
-      value = std::stoi(input->GetValue());
+      smkflow::Slider* slider = smkflow::Slider::From(node->WidgetAt(0));
+      value = (int)(10.f * std::tan((slider->GetValue() - 0.5f) * 3.14));
       values[node] = value;
       node->OutputAt(0)->SetText(std::to_string(value));
       continue;
@@ -135,8 +136,8 @@ void UpdateValues(smkflow::Board* board) {
       input_2->SetValue(std::to_string(values[b]));
 
 
-    int a_value = std::stoi(input_1->GetValue());
-    int b_value = std::stoi(input_2->GetValue());
+    int a_value = std::atoi(input_1->GetValue().c_str());
+    int b_value = std::atoi(input_2->GetValue().c_str());
 
     // clang-format off
     switch (node->Identifier()) {
@@ -167,7 +168,7 @@ int main() {
   }
 
   window.ExecuteMainLoop([&] {
-    window.Clear({0.2, 0.2, 0.2, 1.0});
+    window.Clear(smkflow::color::background);
     window.PoolEvents();
     UpdateValues(board.get());
     board->Step(&window, &window.input());

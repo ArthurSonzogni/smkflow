@@ -26,9 +26,6 @@ class NodeImpl : public Node {
   void Draw(smk::RenderTarget*);
 
   void Step(smk::Input* input, glm::vec2 cursor);
-  bool OnCursorPressed(glm::vec2);
-  void OnCursorMoved(glm::vec2);
-  void OnCursorReleased(glm::vec2);
   
   void Layout();
 
@@ -39,6 +36,7 @@ class NodeImpl : public Node {
   BoardImpl* board() { return board_; }
 
   // Board implementation:
+  Board* GetBoard() override;
   int Identifier() override { return identifier_; }
   void SetPosition(const glm::vec2& position) override;
   int InputCount() override;
@@ -64,6 +62,7 @@ class NodeImpl : public Node {
   float height_;
 
   glm::vec2 cursor_drag_point;
+  CursorCapture cursor_captured_;
 };
 
 }  // namespace smkflow

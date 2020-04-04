@@ -13,6 +13,8 @@ class Node;
 class Slot;
 class Connector;
 class Widget;
+class CursorCaptureInterface;
+using CursorCapture = std::unique_ptr<CursorCaptureInterface>;
 
 class Board {
  public:
@@ -31,6 +33,8 @@ class Board {
   // Observers:
   virtual int NodeCount() = 0;
   virtual Node* NodeAt(int i) = 0;
+
+  virtual CursorCapture CaptureCursor() = 0;
 };
 
 class Slot {
@@ -57,6 +61,7 @@ class Connector {
 class Node {
  public:
   virtual ~Node() = default;
+  virtual Board* GetBoard() = 0;
 
   virtual int Identifier() = 0;
   virtual void SetPosition(const glm::vec2&) = 0;
@@ -69,6 +74,11 @@ class Node {
 
   virtual int WidgetCount() = 0;
   virtual Widget* WidgetAt(int i) = 0;
+};
+
+class CursorCaptureInterface {
+ public:
+  virtual ~CursorCaptureInterface() = default;
 };
 
 }  // namespace smkflow
