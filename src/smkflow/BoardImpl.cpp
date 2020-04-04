@@ -28,11 +28,6 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
   input_ = input;
   (void)target;
 
-  std::cerr << "----" << std::endl;
-  std::cerr << cursor_captured_ << std::endl;
-  std::cerr << cursor_captured_for_connector_.get() << std::endl;
-  std::cerr << cursor_captured_for_dragging_view_.get() << std::endl;
-
   // For some reasons the scrolling offset in web browsers is 100x less than the
   // one on desktop?
   // TODO(arthursonzogni): Figure out why???
