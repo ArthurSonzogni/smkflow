@@ -1,5 +1,5 @@
 smkflow
--------
+=======
 
 A dataflow node editor in C++ compatible with WebAssembly using
 [SMK](https://github.com/ArthurSonzogni/smk)
@@ -20,19 +20,19 @@ API
 ---
 The API consists of 4 files:
 
-[Model.hpp](./include/smkflow/Model.hpp) Defines your own nodes. This is the
+- [Model.hpp](./include/smkflow/Model.hpp) Defines your own nodes. This is the
 main file you need to look at for starting. Please try the
 [./examples/minimal.cpp](./examples/minimal.cpp) file.
 
-[Elements.hpp](./include/smkflow/Elements.hpp) Contains the public definition of the
+- [Elements.hpp](./include/smkflow/Elements.hpp) Contains the public definition of the
 elements composing the view. Use it to query the current state or to apply
 modifications. See [./examples/algebra.cpp](./examples/algebra.cpp) file.
 
-[Widget.hpp](./include/smkflow/Widget.hpp). Each node can contains arbitrary
+- [Widget.hpp](./include/smkflow/Widget.hpp). Each node can contains arbitrary
 widget. The base library contains InputBox and Sliders. You can also define
 yours using this file.
 
-[Constants.hpp](./include/smkflow/Constants.hpp) Contains the default sizes and
+- [Constants.hpp](./include/smkflow/Constants.hpp) Contains the default sizes and
 colors the library is using for staying consistant. Feel free to fork and modify
 this file to make smkflow suits your needs.
 
@@ -57,7 +57,7 @@ endif()
 
 Then link your application with smkflow:
 ~~~cmake
-target_link_library(my_applcation smkflow::smkflow)
+target_link_library(my_applcation PRIVATE smkflow::smkflow)
 ~~~
 
 Want to contribute?
