@@ -3,6 +3,7 @@
 // the LICENSE file.
 #include <fmt/core.h>
 
+#include <algorithm>
 #include <iostream>
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
