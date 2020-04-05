@@ -1,3 +1,6 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #ifndef SMKFLOW_SLOT_HPP
 #define SMKFLOW_SLOT_HPP
 
@@ -38,7 +41,7 @@ class SlotImpl : public Slot {
   Node* OppositeNode() override;
 
  private:
-  bool dimensions_modified_= false;
+  bool dimensions_modified_ = false;
   NodeImpl* node_;  // Owner;
   glm::vec2 position_;
   smk::Text label_;

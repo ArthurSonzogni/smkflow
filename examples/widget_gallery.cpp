@@ -1,10 +1,13 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #include <iostream>
 #include <smk/Color.hpp>
 #include <smk/Window.hpp>
+#include <smkflow/Constants.hpp>
 #include <smkflow/Elements.hpp>
 #include <smkflow/Model.hpp>
 #include <smkflow/Widget.hpp>
-#include <smkflow/Constants.hpp>
 
 #include "asset.hpp"
 
@@ -15,8 +18,7 @@ auto node_sliders = smkflow::model::Node{
     0,
     "Sliders",
     color_node,
-    {
-    },
+    {},
     {
         smkflow::Slider::Create(),
         smkflow::Slider::Create(0, 10, 0, "{:.0f} children"),
@@ -40,9 +42,9 @@ auto node_input = smkflow::model::Node{
         smkflow::InputBox::Create("input box"),
         smkflow::InputBox::Create("input box"),
         smkflow::InputBox::Create("input box"),
-        //smkflow::HBox::Create({
-            //smkflow::Label::Create("coucou:"),
-            //smkflow::Checkbox::Create(false),
+        // smkflow::HBox::Create({
+        // smkflow::Label::Create("coucou:"),
+        // smkflow::Checkbox::Create(false),
         //}),
     },
     {
@@ -63,8 +65,8 @@ int main() {
   auto window = smk::Window(512, 512, "test");
   auto board = smkflow::Board::Create(my_board);
 
-  board->Create(node_input);
-  board->Create(node_sliders);
+  board->Create(node_input)->SetPosition({-150, 0});
+  board->Create(node_sliders)->SetPosition({+150, 0});
 
   window.ExecuteMainLoop([&] {
     window.Clear(smkflow::color::background);

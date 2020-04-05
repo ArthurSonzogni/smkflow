@@ -11,7 +11,7 @@ endif()
 function(add_example target input)
   set(ns_target smkflow_example_${target})
   add_executable(${ns_target} ${input})
-  target_link_libraries(${ns_target} PRIVATE smkflow::smkflow smk::smk asset)
+  target_link_libraries(${ns_target} PRIVATE smkflow::smkflow fmt::fmt asset)
   set_target_properties(${ns_target} PROPERTIES CXX_STANDARD 11)
   set_target_properties(${ns_target} PROPERTIES OUTPUT_NAME ${target})
 
@@ -44,3 +44,4 @@ endfunction(add_example)
 
 add_example(algebra algebra.cpp)
 add_example(widget_gallery widget_gallery.cpp)
+add_example(minimal minimal.cpp)

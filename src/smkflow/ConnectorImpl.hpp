@@ -1,10 +1,13 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #ifndef SMKFLOW_CONNECTOR_HPP
 #define SMKFLOW_CONNECTOR_HPP
 
 #include <smk/RenderTarget.hpp>
 #include <smk/Transformable.hpp>
-#include <smkflow/Model.hpp>
 #include <smkflow/Elements.hpp>
+#include <smkflow/Model.hpp>
 
 namespace smkflow {
 
@@ -19,7 +22,6 @@ class ConnectorImpl : public Connector {
   void Disconnect();
   void DrawForeground(smk::RenderTarget* target);
   void DrawBackground(smk::RenderTarget* target);
-
 
   SlotImpl* input() { return input_; }
   SlotImpl* output() { return output_; }

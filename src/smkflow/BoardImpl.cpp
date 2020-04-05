@@ -1,8 +1,11 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #include <iostream>
 #include <smk/Shape.hpp>
 #include <smkflow/BoardImpl.hpp>
-#include <smkflow/Constants.hpp>
 #include <smkflow/ConnectorImpl.hpp>
+#include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
 
@@ -41,7 +44,7 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
                     std::exp(view_zoom_) * (1.f - std::exp(zoom_increment));
   view_zoom_ += zoom_increment;
 
-  cursor_ = 
+  cursor_ =
       (input->cursor() - target->dimension() * 0.5f) * std::exp(view_zoom_) +
       view_shifting_;
 
@@ -121,29 +124,29 @@ void BoardImpl::ReleaseConnector() {
   connectors_.push_back(std::move(connector));
 }
 
-//void BoardImpl::OnCursorPressed(smk::Input* input_, glm::vec2 cursor_) {
+// void BoardImpl::OnCursorPressed(smk::Input* input_, glm::vec2 cursor_) {
 
-  //// Move node.
-  //for (auto& node : nodes_) {
-    //if (node->OnCursorPressed(cursor_)) {
-      //selected_node_ = node.get();
-      //// Reorder to make selected_node_ to be displayed in front.
-      //int i = 0;
-      //while (nodes_[i].get() != selected_node_)
-        //++i;
-      //while (++i != (int)nodes_.size())
-        //std::swap(nodes_[i - 1], nodes_[i]);
-      //return;
-    //}
-  //}
+//// Move node.
+// for (auto& node : nodes_) {
+// if (node->OnCursorPressed(cursor_)) {
+// selected_node_ = node.get();
+//// Reorder to make selected_node_ to be displayed in front.
+// int i = 0;
+// while (nodes_[i].get() != selected_node_)
+//++i;
+// while (++i != (int)nodes_.size())
+// std::swap(nodes_[i - 1], nodes_[i]);
+// return;
+//}
+//}
 
-  //// Translation.
+//// Translation.
 //}
 
 void BoardImpl::AcquireView() {
   if (!input_->IsCursorPressed())
     return;
-    
+
   cursor_captured_for_dragging_view_ = CaptureCursor();
   if (!cursor_captured_for_dragging_view_)
     return;

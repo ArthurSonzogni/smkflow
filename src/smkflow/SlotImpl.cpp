@@ -1,12 +1,14 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #include <algorithm>
 #include <smk/Shape.hpp>
 #include <smk/Transformable.hpp>
+#include <smkflow/BoardImpl.hpp>
 #include <smkflow/ConnectorImpl.hpp>
 #include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
-#include <smkflow/BoardImpl.hpp>
-#include <smkflow/Constants.hpp>
 
 namespace smkflow {
 

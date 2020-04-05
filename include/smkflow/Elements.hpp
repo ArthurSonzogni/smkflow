@@ -1,3 +1,6 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #ifndef SMKFLOW_ELEMENT_HPP
 #define SMKFLOW_ELEMENT_HPP
 
@@ -22,7 +25,7 @@ class Board {
   virtual ~Board() = default;
 
   virtual Node* Create(const model::Node&) = 0;
-  //virtual void Insert(std::unique_ptr<Node>) = 0;
+  // virtual void Insert(std::unique_ptr<Node>) = 0;
 
   // Called 60/s for animations:
   virtual void Step(smk::RenderTarget* target, smk::Input* input) = 0;

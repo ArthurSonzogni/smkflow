@@ -1,3 +1,8 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
+#include <fmt/core.h>
+
 #include <iostream>
 #include <smk/Color.hpp>
 #include <smk/Window.hpp>
@@ -94,7 +99,7 @@ auto node_number = smkflow::model::Node{
     node_color_number,
     {},
     {
-        smkflow::Slider::Create(-20.f, 20.f),
+        smkflow::Slider::Create(-20.f, 20.f, 0.f, "{:.2f}"),
     },
     {
         {"out", type_number},
@@ -112,32 +117,32 @@ auto my_board = smkflow::model::Board{
     asset::arial_ttf,
 };
 
-std::map<smkflow::Node*, int> values;
+std::map<smkflow::Node*, float> values;
+
+const char* float_format = "{:.2f}";
 
 void UpdateValues(smkflow::Board* board) {
   for (int i = 0; i < board->NodeCount(); ++i) {
     smkflow::Node* node = board->NodeAt(i);
-    int value = 0;
+    float value = 0;
     if (node->Identifier() == Number) {
       smkflow::Slider* slider = smkflow::Slider::From(node->WidgetAt(0));
-      value = (int)(10.f * std::tan((slider->GetValue() - 0.5f) * 3.14));
+      value = slider->GetValue();
       values[node] = value;
-      node->OutputAt(0)->SetText(std::to_string(value));
       continue;
     }
 
     smkflow::InputBox* input_1 = smkflow::InputBox::From(node->WidgetAt(0));
     smkflow::InputBox* input_2 = smkflow::InputBox::From(node->WidgetAt(1));
 
-    if (auto* a = node->InputAt(0)->OppositeNode()) 
-      input_1->SetValue(std::to_string(values[a]));
+    if (auto* a = node->InputAt(0)->OppositeNode())
+      input_1->SetValue(fmt::format(float_format, values[a]));
 
-    if (auto* b = node->InputAt(1)->OppositeNode()) 
-      input_2->SetValue(std::to_string(values[b]));
+    if (auto* b = node->InputAt(1)->OppositeNode())
+      input_2->SetValue(fmt::format(float_format, values[b]));
 
-
-    int a_value = std::atoi(input_1->GetValue().c_str());
-    int b_value = std::atoi(input_2->GetValue().c_str());
+    float a_value = std::atof(input_1->GetValue().c_str());
+    float b_value = std::atof(input_2->GetValue().c_str());
 
     // clang-format off
     switch (node->Identifier()) {
@@ -149,7 +154,7 @@ void UpdateValues(smkflow::Board* board) {
     }
     // clang-format on
     values[node] = value;
-    node->OutputAt(0)->SetText(std::to_string(value));
+    node->OutputAt(0)->SetText(fmt::format(float_format, value));
   }
 }
 

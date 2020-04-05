@@ -1,9 +1,12 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #ifndef EDITOR_BOARD_HPP
 #define EDITOR_BOARD_HPP
 
 #include <smk/Font.hpp>
-#include <smkflow/Model.hpp>
 #include <smkflow/Elements.hpp>
+#include <smkflow/Model.hpp>
 #include <smkflow/NodeImpl.hpp>
 
 namespace smkflow {
@@ -35,8 +38,8 @@ class BoardImpl : public Board {
   void ReleaseView();
 
   CursorCapture cursor_captured_for_dragging_view_;
-  glm::vec2 grab_point_ = {0.f,0.f};
-  glm::vec2 view_shifting_ = {0.f,0.f};
+  glm::vec2 grab_point_ = {0.f, 0.f};
+  glm::vec2 view_shifting_ = {0.f, 0.f};
   float view_zoom_ = 0.f;
 
   // Build connectors in between nodes -----------------------------------------
@@ -56,7 +59,6 @@ class BoardImpl : public Board {
 
   std::vector<std::unique_ptr<NodeImpl>> nodes_;
   std::vector<std::unique_ptr<ConnectorImpl>> connectors_;
-
 
   smk::Font font_;
 

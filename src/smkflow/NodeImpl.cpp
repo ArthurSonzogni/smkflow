@@ -1,3 +1,6 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #include <iostream>
 #include <smk/Font.hpp>
 #include <smk/Shape.hpp>
@@ -22,14 +25,15 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
   title_ = smk::Text(board->font(), model.label);
   title_.SetColor(color::text);
 
-  for(const auto& model: model.input) {
-    auto slot = std::make_unique<SlotImpl>(this, model.label, false, model.color);
+  for (const auto& model : model.input) {
+    auto slot =
+        std::make_unique<SlotImpl>(this, model.label, false, model.color);
     inputs_.push_back(std::move(slot));
   }
 
   for (const auto& model : model.output) {
-    auto slot = std::make_unique<SlotImpl>(this, model.label, true,
-                                           model.color);
+    auto slot =
+        std::make_unique<SlotImpl>(this, model.label, true, model.color);
     outputs_.push_back(std::move(slot));
   }
 
@@ -41,7 +45,8 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
 
 void NodeImpl::Layout() {
   // Compute the dimensions ----------------------------------------------------
-  auto title_dimension = title_.ComputeDimensions();
+  auto title_dimension =
+      title_.ComputeDimensions() + 6.f * padding * glm::vec2(1.f);
 
   float widget_width = 0.f;
   float widget_height = 0.f;
@@ -72,7 +77,6 @@ void NodeImpl::Layout() {
   output_width += padding;
   widget_width = std::max(widget_width, title_dimension.x - input_width -
                                             output_height + 2 * padding);
-
   const float x_a = 0.f;
   const float x_b = x_a + input_width;
   const float x_c = x_b + widget_width;
@@ -105,7 +109,7 @@ void NodeImpl::Layout() {
 
   x = x_b;
   y = y_b;
-  for(auto& widget : widgets_) {
+  for (auto& widget : widgets_) {
     auto dimensions = widget->ComputeDimensions();
     widget->SetPosition({x, y});
     widget->SetDimensions({widget_width, dimensions.y});
@@ -138,7 +142,7 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
     slot->Draw(target);
   for (auto& slot : outputs_)
     slot->Draw(target);
-  for(auto& widget : widgets_)
+  for (auto& widget : widgets_)
     widget->Draw(target);
 }
 
@@ -158,7 +162,7 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
   if (relayout)
     Layout();
 
-  for(auto& widget : widgets_)
+  for (auto& widget : widgets_)
     widget->Step(input, cursor);
 
   bool hover = cursor.x > position_.x && cursor.x < position_.x + width_ &&
@@ -171,7 +175,7 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
 
   if (!cursor_captured_)
     return;
-  
+
   position_ = cursor_drag_point + cursor;
 }
 

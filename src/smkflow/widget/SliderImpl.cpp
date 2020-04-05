@@ -1,14 +1,17 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
+#include <fmt/core.h>
+
 #include <iostream>
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
 #include <smk/Shape.hpp>
 #include <smk/Text.hpp>
-#include <smk/Input.hpp>
 #include <smkflow/BoardImpl.hpp>
+#include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/Widget.hpp>
-#include <smkflow/Constants.hpp>
-#include <fmt/core.h>
 
 namespace smkflow {
 
@@ -68,7 +71,8 @@ class SliderImpl : public Widget, public Slider {
     track_.SetPosition(position);
     track_.SetScale(dimension);
 
-    handle_.SetPosition(position.x + (dimension.x - handle_width) * (value_ - min_) / (max_ - min_),
+    handle_.SetPosition(position.x + (dimension.x - handle_width) *
+                                         (value_ - min_) / (max_ - min_),
                         position.y);
 
     auto& track_color_target = focus_ ? color::widget_background_focus
@@ -87,8 +91,8 @@ class SliderImpl : public Widget, public Slider {
     target->Draw(track_);
     target->Draw(handle_);
 
-    text_.SetPosition(position+ dimension * 0.5f -
-                       text_.ComputeDimensions() * 0.5f);
+    text_.SetPosition(position + dimension * 0.5f -
+                      text_.ComputeDimensions() * 0.5f);
     target->Draw(text_);
   }
 

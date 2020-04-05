@@ -1,3 +1,6 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #ifndef SMKFLOW_WIDGET_WIDGET_HPP
 #define SMKFLOW_WIDGET_WIDGET_HPP
 
@@ -32,7 +35,7 @@ class Slider {
   static WidgetFactory Create(float min = 0.f,
                               float max = 100.f,
                               float value = 50.f,
-                              std::string format = "{:.0f}%"); // Use fmt lib.
+                              std::string format = "{:.0f}%");  // Use fmt lib.
   static Slider* From(Widget*);
   virtual void SetValue(float) = 0;
   virtual float GetValue() = 0;

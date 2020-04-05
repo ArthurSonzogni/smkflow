@@ -1,12 +1,14 @@
+// Copyright 2020 Arthur Sonzogni. All rights reserved.
+// Use of this source code is governed by the MIT license that can be found in
+// the LICENSE file.
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
 #include <smk/Shape.hpp>
 #include <smk/Text.hpp>
-#include <smk/Input.hpp>
 #include <smkflow/BoardImpl.hpp>
+#include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/Widget.hpp>
-#include <smkflow/Constants.hpp>
 
 namespace smkflow {
 
@@ -35,7 +37,7 @@ class InputBoxImpl : public Widget, public InputBox {
   void Step(smk::Input* input, const glm::vec2& cursor) override {
     auto position = cursor - Position();
     hover_ = (position.x >= 0.f && position.y >= 0.f &&
-             position.x <= dimensions().x && position.y <= dimensions().y);
+              position.x <= dimensions().x && position.y <= dimensions().y);
 
     if (input->IsCursorPressed())
       focus_ = false;
@@ -48,7 +50,7 @@ class InputBoxImpl : public Widget, public InputBox {
     if (focus_) {
       bool modified = false;
       wchar_t character;
-      while(character_listener_->Receive(&character)) {
+      while (character_listener_->Receive(&character)) {
         input_ += character;
         modified = true;
       }
