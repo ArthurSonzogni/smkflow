@@ -12,6 +12,16 @@ script:
 notifications:
   email: false
 
+addons:
+  apt:
+    sources:
+    - sourceline: "deb http://archive.ubuntu.com/ubuntu/ xenial multiverse"
+    - sourceline: "deb http://archive.ubuntu.com/ubuntu/ xenial-backports universe"
+    packages:
+    - xorg-dev
+    - libgl1-mesa-dev
+    - libpulse-dev
+
 jobs:
   include:
     # Ubuntu
