@@ -167,7 +167,7 @@ int main() {
   for (const auto& node_model : my_board.nodes) {
     for (int y = -4; y < 4; ++y) {
       smkflow::Node* node = board->Create(node_model);
-      node->SetPosition({200 * x, 200 * y});
+      node->SetPosition({300 * x, 300 * y});
     }
     ++x;
   }
