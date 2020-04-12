@@ -70,7 +70,7 @@ class BoardImpl : public Board {
   smk::Input* input_;
   glm::vec2 cursor_;
 
-  float push_ = 0.01f;
+  float push_ = 0.f;
 };
 
 }  // namespace smkflow

@@ -156,7 +156,7 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
 
 void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
   position_ += speed_;
-  speed_ *= 0.5f;
+  speed_ *= 0.2f;
   if (input->IsCursorReleased()) {
     cursor_captured_.reset();
   }
@@ -184,7 +184,7 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
 
 void NodeImpl::Push(glm::vec2 direction) {
   position_ += direction;
-  speed_ += direction * 0.1f;
+  speed_ += direction * 0.2f;
 }
 void NodeImpl::SetPosition(const glm::vec2& position) {
   position_ = position;

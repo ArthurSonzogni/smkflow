@@ -166,9 +166,9 @@ int main() {
   // Instanciate some Node based on the model.
   int x = -my_board.nodes.size() / 2;
   for (const auto& node_model : my_board.nodes) {
-    for (int y = -30; y < 30; ++y) {
+    for (int y = -4; y < 4; ++y) {
       smkflow::Node* node = board->Create(node_model);
-      node->SetPosition({30 * x, 30 * y});
+      node->SetPosition({200 * x, 200 * y});
     }
     ++x;
   }
