@@ -37,22 +37,26 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
     outputs_.push_back(std::move(slot));
   }
 
-  for (const auto& builder : model.widgets)
-    widgets_.push_back(builder(this));
+  widget_ = model.widget(this);
 
   Layout();
 }
 
+void NodeImpl::InvalidateLayout() {
+  layout_invalidated_ = true;
+  std::cerr << "Invalidated" << std::endl;
+}
+
 void NodeImpl::Layout() {
-  // Compute the dimensions ----------------------------------------------------
+  layout_invalidated_ = false;
   auto title_dimension =
       title_.ComputeDimensions() + 6.f * padding * glm::vec2(1.f);
 
   float widget_width = 0.f;
   float widget_height = 0.f;
-  for (const auto& widget : widgets_) {
-    auto dimensions = widget->ComputeDimensions();
-    widget->SetDimensions(dimensions);
+  if (widget_) {
+    auto dimensions = widget_->ComputeDimensions();
+    widget_->SetDimensions(dimensions);
     widget_width = std::max(widget_width, dimensions.x);
     widget_height += dimensions.y + size::widget_margin;
   }
@@ -109,10 +113,10 @@ void NodeImpl::Layout() {
 
   x = x_b;
   y = y_b;
-  for (auto& widget : widgets_) {
-    auto dimensions = widget->ComputeDimensions();
-    widget->SetPosition({x, y});
-    widget->SetDimensions({widget_width, dimensions.y});
+  if (widget_) {
+    auto dimensions = widget_->ComputeDimensions();
+    widget_->SetPosition({x, y});
+    widget_->SetDimensions({widget_width, dimensions.y});
     y += dimensions.y + size::widget_margin;
   }
 
@@ -142,8 +146,9 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
     slot->Draw(target);
   for (auto& slot : outputs_)
     slot->Draw(target);
-  for (auto& widget : widgets_)
-    widget->Draw(target);
+  if (widget_) {
+    widget_->Draw(target);
+  }
 }
 
 void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
@@ -151,19 +156,11 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
     cursor_captured_.reset();
   }
 
-  bool relayout = false;
-  for (auto& slot : inputs_)
-    relayout |= slot->ValidateDimensions();
-  for (auto& slot : outputs_)
-    relayout |= slot->ValidateDimensions();
-  for (auto& widget : widgets_)
-    relayout |= widget->ValidateDimensions();
-
-  if (relayout)
+  if (layout_invalidated_)
     Layout();
 
-  for (auto& widget : widgets_)
-    widget->Step(input, cursor);
+  if (widget_)
+    widget_->Step(input, cursor);
 
   bool hover = cursor.x > position_.x && cursor.x < position_.x + width_ &&
                cursor.y > position_.y && cursor.y < position_.y + height_;
@@ -217,11 +214,8 @@ int NodeImpl::OutputCount() {
 Slot* NodeImpl::OutputAt(int i) {
   return outputs_.at(i).get();
 }
-int NodeImpl::WidgetCount() {
-  return widgets_.size();
-}
-Widget* NodeImpl::WidgetAt(int i) {
-  return widgets_.at(i).get();
+Widget* NodeImpl::widget() {
+  return widget_.get();
 }
 
 }  // namespace smkflow

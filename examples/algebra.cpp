@@ -9,7 +9,9 @@
 #include <smkflow/Constants.hpp>
 #include <smkflow/Elements.hpp>
 #include <smkflow/Model.hpp>
-#include <smkflow/Widget.hpp>
+#include <smkflow/widget/Box.hpp>
+#include <smkflow/widget/Input.hpp>
+#include <smkflow/widget/Slider.hpp>
 
 #include "asset.hpp"
 
@@ -34,12 +36,12 @@ auto node_add = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create("0.0"),
-        smkflow::InputBox::Create("0.0"),
-    },
-    {
         {"out", type_number},
     },
+    smkflow::VBox({
+      smkflow::Input("0.0"),
+      smkflow::Input("0.0"),
+    })
 };
 
 auto node_substract = smkflow::model::Node{
@@ -51,12 +53,12 @@ auto node_substract = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create("0.0"),
-        smkflow::InputBox::Create("0.0"),
-    },
-    {
         {"out", type_number},
     },
+    smkflow::VBox({
+      smkflow::Input("0.0"),
+      smkflow::Input("0.0"),
+    })
 };
 
 auto node_multiply = smkflow::model::Node{
@@ -68,12 +70,12 @@ auto node_multiply = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create("0.0"),
-        smkflow::InputBox::Create("0.0"),
-    },
-    {
         {"out", type_number},
     },
+    smkflow::VBox({
+      smkflow::Input("0.0"),
+      smkflow::Input("0.0"),
+    })
 };
 
 auto node_divide = smkflow::model::Node{
@@ -85,12 +87,12 @@ auto node_divide = smkflow::model::Node{
         {"", type_number},
     },
     {
-        smkflow::InputBox::Create("0.0"),
-        smkflow::InputBox::Create("0.0"),
-    },
-    {
         {"", type_number},
     },
+    smkflow::VBox({
+      smkflow::Input("0.0"),
+      smkflow::Input("0.0"),
+    })
 };
 
 auto node_number = smkflow::model::Node{
@@ -99,11 +101,9 @@ auto node_number = smkflow::model::Node{
     node_color_number,
     {},
     {
-        smkflow::Slider::Create(-20.f, 20.f, 0.f, "{:.2f}"),
-    },
-    {
         {"out", type_number},
     },
+    smkflow::Slider(-20.f, 20.f, 0.f, "{:.2f}"),
 };
 
 auto my_board = smkflow::model::Board{
@@ -126,14 +126,15 @@ void UpdateValues(smkflow::Board* board) {
     smkflow::Node* node = board->NodeAt(i);
     float value = 0;
     if (node->Identifier() == Number) {
-      smkflow::Slider* slider = smkflow::Slider::From(node->WidgetAt(0));
+      auto slider = smkflow::Slider(node->widget());
       value = slider->GetValue();
       values[node] = value;
       continue;
     }
 
-    smkflow::InputBox* input_1 = smkflow::InputBox::From(node->WidgetAt(0));
-    smkflow::InputBox* input_2 = smkflow::InputBox::From(node->WidgetAt(1));
+    auto box = smkflow::Box(node->widget());
+    auto input_1 = smkflow::Input(box->ChildAt(0));
+    auto input_2 = smkflow::Input(box->ChildAt(1));
 
     if (auto* a = node->InputAt(0)->OppositeNode())
       input_1->SetValue(fmt::format(float_format, values[a]));

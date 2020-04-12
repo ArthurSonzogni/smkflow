@@ -12,7 +12,8 @@
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
-#include <smkflow/Widget.hpp>
+#include <smkflow/widget/Widget.hpp>
+#include <smkflow/widget/Slider.hpp>
 
 namespace smkflow {
 
@@ -20,7 +21,7 @@ namespace {
 const float handle_width = 8.f;
 }  // namespace
 
-class SliderImpl : public Widget, public Slider {
+class SliderImpl : public Widget, public SliderInterface {
  public:
   SliderImpl(Node* node, float min, float max, float value, std::string format)
       : Widget(node), min_(min), max_(max), value_(value), format_(format) {
@@ -28,8 +29,6 @@ class SliderImpl : public Widget, public Slider {
 
     track_ = smk::Shape::Square();
     handle_ = smk::Shape::Square();
-
-    handle_.SetScale(handle_width, size::widget_height);
 
     computed_dimensions_ = {200.f, size::widget_height};
   }
@@ -71,6 +70,7 @@ class SliderImpl : public Widget, public Slider {
 
     track_.SetPosition(position);
     track_.SetScale(dimension);
+    handle_.SetScale(handle_width, dimension.y);
 
     handle_.SetPosition(position.x + (dimension.x - handle_width) *
                                          (value_ - min_) / (max_ - min_),
@@ -118,18 +118,15 @@ class SliderImpl : public Widget, public Slider {
 };
 
 // static
-WidgetFactory Slider::Create(float min,
-                             float max,
-                             float value,
-                             std::string format) {
+WidgetFactory Slider(float min, float max, float value, std::string format) {
   return [=](Node* node) {
     return std::make_unique<SliderImpl>(node, min, max, value, format);
   };
 }
 
 // static
-Slider* Slider::From(Widget* w) {
-  return dynamic_cast<Slider*>(w);
+SliderInterface* Slider(Widget* w) {
+  return dynamic_cast<SliderInterface*>(w);
 }
 
 }  // namespace smkflow

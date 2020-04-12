@@ -75,8 +75,7 @@ class Node {
   virtual int OutputCount() = 0;
   virtual Slot* OutputAt(int i) = 0;
 
-  virtual int WidgetCount() = 0;
-  virtual Widget* WidgetAt(int i) = 0;
+  virtual Widget* widget() = 0;
 };
 
 class CursorCaptureInterface {

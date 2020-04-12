@@ -28,13 +28,14 @@ main file you need to look at for starting. Please try the
 elements composing the view. Use it to query the current state or to apply
 modifications. See [./examples/algebra.cpp](./examples/algebra.cpp) file.
 
-- [Widget.hpp](./include/smkflow/Widget.hpp). Each node can contains arbitrary
-widget. The base library contains InputBox and Sliders. You can also define
-yours using this file.
-
 - [Constants.hpp](./include/smkflow/Constants.hpp) Contains the default sizes and
 colors the library is using for staying consistant. Feel free to fork and modify
 this file to make smkflow suits your needs.
+
+- [Widget/](./include/smkflow/widget). Each node can contains arbitrary
+widgets. The base library contains InputBox and Sliders. You can also define
+yours using this file.
+
 
 CMake
 -----

@@ -23,8 +23,6 @@ auto node_A = smkflow::model::Node{
         {"a", blue},
         {"b", red},
     },
-    // Widgets:
-    {},
     // Output:
     {
         {"b", red},

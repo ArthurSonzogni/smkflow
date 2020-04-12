@@ -42,9 +42,10 @@ class SlotImpl : public Slot {
 
  private:
   bool dimensions_modified_ = false;
-  NodeImpl* node_;  // Owner;
+  NodeImpl* const node_;  // Owner;
   glm::vec2 position_;
   smk::Text label_;
+  std::string text_;
   bool is_right_ = true;
   glm::vec4 color_;
 

@@ -8,13 +8,14 @@
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
-#include <smkflow/Widget.hpp>
+#include <smkflow/widget/Input.hpp>
+#include <smkflow/widget/Widget.hpp>
 
 namespace smkflow {
 
-class InputBoxImpl : public Widget, public InputBox {
+class InputImpl : public Widget, public InputInterface {
  public:
-  InputBoxImpl(Node* node, const std::string& value)
+  InputImpl(Node* node, const std::string& value)
       : Widget(node), input_(value) {
     square_ = smk::Shape::Square();
     square_.SetScale({128.f, 32.f});
@@ -81,6 +82,8 @@ class InputBoxImpl : public Widget, public InputBox {
   }
 
   void SetValue(const std::string& value) override {
+    if (input_ == value)
+      return;
     input_ = value;
     SetText();
   }
@@ -98,15 +101,14 @@ class InputBoxImpl : public Widget, public InputBox {
 };
 
 // static
-WidgetFactory InputBox::Create(const std::string& initial_value) {
+WidgetFactory Input(const std::string& initial_value) {
   return [initial_value](Node* node) {
-    return std::make_unique<InputBoxImpl>(node, initial_value);
+    return std::make_unique<InputImpl>(node, initial_value);
   };
 }
 
-// static
-InputBox* InputBox::From(Widget* w) {
-  return dynamic_cast<InputBox*>(w);
+InputInterface* Input(Widget* w) {
+  return dynamic_cast<InputInterface*>(w);
 }
 
 }  // namespace smkflow

@@ -30,6 +30,7 @@ class NodeImpl : public Node {
 
   void Step(smk::Input* input, glm::vec2 cursor);
 
+  void InvalidateLayout();
   void Layout();
 
   const glm::vec2& GetPosition();
@@ -46,15 +47,14 @@ class NodeImpl : public Node {
   Slot* InputAt(int i) override;
   int OutputCount() override;
   Slot* OutputAt(int i) override;
-  int WidgetCount() override;
-  Widget* WidgetAt(int i) override;
+  Widget* widget() override;
 
  private:
   BoardImpl* board_;
   int identifier_;
   std::vector<std::unique_ptr<SlotImpl>> inputs_;
   std::vector<std::unique_ptr<SlotImpl>> outputs_;
-  std::vector<std::unique_ptr<Widget>> widgets_;
+  std::unique_ptr<Widget> widget_;
   glm::vec2 position_ = glm::vec2(0, 0);
   smk::Text title_;
   smk::Transformable title_base_;
@@ -63,6 +63,8 @@ class NodeImpl : public Node {
 
   float width_;
   float height_;
+
+  bool layout_invalidated_ = true;
 
   glm::vec2 cursor_drag_point;
   CursorCapture cursor_captured_;

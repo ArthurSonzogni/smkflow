@@ -22,6 +22,7 @@ SlotImpl::SlotImpl(NodeImpl* node,
     : node_(node), is_right_(is_right), color_(color) {
   circle_background = smk::Shape::Circle(8);
   circle = smk::Shape::Circle(5);
+  text_ = label + " ";
   SetText(label);
 }
 
@@ -48,12 +49,6 @@ void SlotImpl::Draw(smk::RenderTarget* target) {
 
   label_.SetPosition(position);
   target->Draw(label_);
-}
-
-bool SlotImpl::ValidateDimensions() {
-  bool ret = dimensions_modified_;
-  dimensions_modified_ = false;
-  return ret;
 }
 
 void SlotImpl::Connect(ConnectorImpl* connector) {
@@ -90,7 +85,10 @@ glm::vec4 SlotImpl::GetColor() {
 }
 
 void SlotImpl::SetText(const std::string& text) {
-  label_ = smk::Text(node_->board()->font(), text);
+  if (text_ == text)
+    return;
+  text_ = text;
+  label_ = smk::Text(node_->board()->font(), text_);
   auto center = label_.ComputeDimensions();
   center.y *= 0.5;
   if (IsRight())
@@ -98,7 +96,8 @@ void SlotImpl::SetText(const std::string& text) {
   else
     center.x = -5;
   label_.SetCenter(center);
-  dimensions_modified_ = true;
+
+  node_->InvalidateLayout();
 }
 
 Node* SlotImpl::GetNode() {

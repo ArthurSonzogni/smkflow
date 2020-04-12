@@ -11,7 +11,12 @@ add_library(smkflow STATIC
   include/smkflow/Constants.hpp
   include/smkflow/Elements.hpp
   include/smkflow/Model.hpp
-  include/smkflow/Widget.hpp
+  include/smkflow/widget/Box.hpp
+  include/smkflow/widget/Input.hpp
+  include/smkflow/widget/Slider.hpp
+  include/smkflow/widget/Widget.hpp
+  include/smkflow/widget/Label.hpp
+
   src/smkflow/BoardImpl.cpp
   src/smkflow/BoardImpl.hpp
   src/smkflow/ConnectorImpl.cpp
@@ -20,9 +25,11 @@ add_library(smkflow STATIC
   src/smkflow/NodeImpl.hpp
   src/smkflow/SlotImpl.cpp
   src/smkflow/SlotImpl.hpp
-  src/smkflow/widget/InputBoxImpl.cpp
+  src/smkflow/widget/BoxImpl.cpp
+  src/smkflow/widget/InputImpl.cpp
   src/smkflow/widget/SliderImpl.cpp
   src/smkflow/widget/Widget.cpp
+  src/smkflow/widget/LabelImpl.cpp
 )
 add_library(smkflow::smkflow ALIAS smkflow)
 
