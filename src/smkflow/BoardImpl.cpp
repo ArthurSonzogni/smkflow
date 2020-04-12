@@ -58,6 +58,55 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
   MoveConnector();
   AcquireView();
   MoveView();
+
+  PushNodeAppart();
+}
+
+void BoardImpl::PushNodeAppart() {
+  // Find 2 nodes, try to move them away from each other.
+  int k = 0;
+  std::vector<NodeImpl*> h_nodes;
+  for (auto& it : nodes_)
+    h_nodes.push_back(it.get());
+  std::sort(h_nodes.begin(), h_nodes.end(), [](NodeImpl* a, NodeImpl* b) {
+    return a->position().x < b->position().x;
+  });
+
+  for(size_t a = 0; a<h_nodes.size(); ++a) {
+    NodeImpl* node_a = nodes_.at(a).get();
+    glm::vec2 a1 = node_a->position();
+    glm::vec2 a2 = a1 + node_a->dimension();
+    for (size_t b = a + 1; b < h_nodes.size(); ++b) {
+      NodeImpl* node_b = nodes_.at(b).get();
+      glm::vec2 b1 = node_b->position();
+      if (a2.x < b1.x)
+        continue;
+      ++k;
+      glm::vec2 b2 = b1 + node_b->dimension();
+      float dist = std::max(std::max(b1.x - a2.x, a1.x - b2.x),
+                            std::max(b1.y - a2.y, a1.y - b2.y));
+      if (dist > 0.f)
+        continue;
+
+      // clang-format on
+      glm::vec2 dir;
+      if (b1.x - a2.x == dist) dir = glm::vec2(dist, 0.f);
+      if (a1.x - b2.x == dist) dir = glm::vec2(-dist, 0.f);
+      if (b1.y - a2.y == dist) dir = glm::vec2(0.f, dist);
+      if (a1.y - b2.y == dist) dir = glm::vec2(0.f, -dist);
+      // clang-format off
+
+      dist *= 0.5f * push_;
+
+      glm::vec2 ca = node_a->position() + node_a->dimension() * 0.5f;
+      glm::vec2 cb = node_b->position() + node_b->dimension() * 0.5f;
+      dir += glm::normalize(cb - ca) * dist * 0.5f * push_;
+
+      node_a->Push(dir);
+      node_b->Push(-dir);
+    }
+  }
+  push_ += (1.f - push_) * 0.01f;
 }
 
 void BoardImpl::AquireConnector() {

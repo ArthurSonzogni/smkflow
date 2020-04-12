@@ -39,6 +39,10 @@ class NodeImpl : public Node {
 
   BoardImpl* board() { return board_; }
 
+  void Push(glm::vec2 direction);
+  glm::vec2 position() { return position_; }
+  glm::vec2 dimension() { return dimension_; }
+
   // Board implementation:
   Board* GetBoard() override;
   int Identifier() override { return identifier_; }
@@ -56,6 +60,7 @@ class NodeImpl : public Node {
   std::vector<std::unique_ptr<SlotImpl>> outputs_;
   std::unique_ptr<Widget> widget_;
   glm::vec2 position_ = glm::vec2(0, 0);
+  glm::vec2 dimension_ = glm::vec2(0, 0);
   smk::Text title_;
   smk::Transformable title_base_;
   smk::Transformable base_;
@@ -65,6 +70,7 @@ class NodeImpl : public Node {
   float height_;
 
   bool layout_invalidated_ = true;
+  glm::vec2 speed_ = glm::vec2(0.f, 0.f);
 
   glm::vec2 cursor_drag_point;
   CursorCapture cursor_captured_;

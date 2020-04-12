@@ -131,6 +131,8 @@ void NodeImpl::Layout() {
   title_base_ = smk::Shape::RoundedRectangle(width_, title_height, 10);
   title_base_.SetCenter(-width_ * 0.5, -title_height * 0.5);
   title_base_.SetColor(color_);
+
+  dimension_ = {width_, height_};
 }
 
 NodeImpl::~NodeImpl() = default;
@@ -153,6 +155,8 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
 }
 
 void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
+  position_ += speed_;
+  speed_ *= 0.5f;
   if (input->IsCursorReleased()) {
     cursor_captured_.reset();
   }
@@ -175,10 +179,16 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
     return;
 
   position_ = cursor_drag_point + cursor;
+  speed_ = glm::vec2(0.f, 0.f);
 }
 
+void NodeImpl::Push(glm::vec2 direction) {
+  position_ += direction;
+  speed_ += direction * 0.1f;
+}
 void NodeImpl::SetPosition(const glm::vec2& position) {
   position_ = position;
+  speed_ = glm::vec2(0.f, 0.f);
 }
 
 const glm::vec2& NodeImpl::GetPosition() {

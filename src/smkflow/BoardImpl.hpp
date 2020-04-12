@@ -32,6 +32,9 @@ class BoardImpl : public Board {
   CursorCapture CaptureCursor() override;
 
  private:
+
+  void PushNodeAppart();
+
   // Move / Zoom the view ------------------------------------------------------
   void AcquireView();
   void MoveView();
@@ -66,6 +69,8 @@ class BoardImpl : public Board {
 
   smk::Input* input_;
   glm::vec2 cursor_;
+
+  float push_ = 0.01f;
 };
 
 }  // namespace smkflow
