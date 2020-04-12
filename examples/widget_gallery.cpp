@@ -52,18 +52,9 @@ auto node_label = model::Node{
     {},
     {},
     VBox({
-        HBox({
-            Label("X:"),
-            Slider(0, 1, 0.5, "{:.2f}"),
-        }),
-        HBox({
-            Label("Y:"),
-            Slider(0, 1, 0.5, "{:.2f}"),
-        }),
-        HBox({
-            Label("Z:"),
-            Slider(0, 1, 0.5, "{:.2f}"),
-        }),
+        HBox({Label("X:"), Slider(0, 1, 0.5, "{:.2f}")}),
+        HBox({Label("Y:"), Slider(0, 1, 0.5, "{:.2f}")}),
+        HBox({Label("Z:"), Slider(0, 1, 0.5, "{:.2f}")}),
     }),
 };
 
