@@ -70,7 +70,7 @@ void ConnectorImpl::RebuildVertex() {
           position_b + (output_->IsRight() ? +strength : -strength),
           position_b,
       },
-      16);
+      32);
 
   background_ = smk::Shape::Path(bezier, 16);
   foreground_ = smk::Shape::Path(bezier, 10);

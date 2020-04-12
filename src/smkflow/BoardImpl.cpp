@@ -95,13 +95,13 @@ void BoardImpl::MoveConnector() {
     connector_out_ += (end_slot->GetPosition() - connector_out_) * 0.5f;
     connector_out_pushed =
         connector_out_ + (end_slot->IsRight() ? +strength : -strength);
-    connector_out_ += (connector_out_ - connector_out_) * 0.1f;
+    connector_out_ += (connector_out_ - connector_out_) * 0.2f;
   } else {
     connector_out_ = cursor_;
   }
   connector_out_pushed_ +=
-      (connector_out_pushed - connector_out_pushed_) * 0.1f;
-  connector_in_pushed_ += (connector_in_pushed - connector_in_pushed_) * 0.1f;
+      (connector_out_pushed - connector_out_pushed_) * 0.2f;
+  connector_in_pushed_ += (connector_in_pushed - connector_in_pushed_) * 0.2f;
 }
 
 void BoardImpl::ReleaseConnector() {
@@ -188,7 +188,7 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
             connector_out_pushed_,
             connector_out_,
         },
-        16);
+        32);
 
     auto background_ = smk::Shape::Path(bezier, 16);
     auto foreground_ = smk::Shape::Path(bezier, 10);

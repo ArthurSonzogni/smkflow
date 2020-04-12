@@ -37,7 +37,8 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
     outputs_.push_back(std::move(slot));
   }
 
-  widget_ = model.widget(this);
+  if (model.widget)
+    widget_ = model.widget(this);
 
   Layout();
 }
