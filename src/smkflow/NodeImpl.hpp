@@ -19,7 +19,7 @@ namespace smkflow {
 class SlotImpl;
 class BoardImpl;
 
-class NodeImpl : public Node {
+class NodeImpl : public Node, public Widget::Delegate {
  public:
   NodeImpl(BoardImpl* board, const model::Node& model);
   ~NodeImpl() override;
@@ -30,7 +30,6 @@ class NodeImpl : public Node {
 
   void Step(smk::Input* input, glm::vec2 cursor);
 
-  void InvalidateLayout();
   void Layout();
 
   const glm::vec2& GetPosition();
@@ -43,7 +42,7 @@ class NodeImpl : public Node {
   glm::vec2 position() { return position_; }
   glm::vec2 dimension() { return dimension_; }
 
-  // Board implementation:
+  // Board:
   Board* GetBoard() override;
   int Identifier() override { return identifier_; }
   void SetPosition(const glm::vec2& position) override;
@@ -52,6 +51,12 @@ class NodeImpl : public Node {
   int OutputCount() override;
   Slot* OutputAt(int i) override;
   Widget* widget() override;
+
+  // WidgetDelegate:
+  glm::vec2 Position() override { return position_;}
+  void InvalidateLayout() override;
+  smk::Font& Font() override;
+  CursorCapture CaptureCursor() override;
 
  private:
   BoardImpl* board_;

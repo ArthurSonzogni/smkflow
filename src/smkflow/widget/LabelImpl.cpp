@@ -4,21 +4,17 @@
 #include <smk/RenderTarget.hpp>
 #include <smk/Text.hpp>
 #include <smkflow/Constants.hpp>
-#include <smkflow/NodeImpl.hpp>
 #include <smkflow/widget/Label.hpp>
 #include <smkflow/widget/Widget.hpp>
-#include <smkflow/BoardImpl.hpp>
 
 namespace smkflow {
 
 class LabelImpl : public Widget {
  public:
-  LabelImpl(Node* node, const std::string& text) : Widget(node) {
-    text_ = smk::Text(Font(), text);
+  LabelImpl(Delegate* delegate, const std::string& text) : Widget(delegate) {
+    text_ = smk::Text(delegate->Font(), text);
     computed_dimensions_ = text_.ComputeDimensions();
   }
-
-  smk::Font& Font() { return NodeImpl::From(node())->board()->font(); }
 
   // Widget implementation:
   glm::vec2 ComputeDimensions() override { return computed_dimensions_; }
@@ -35,8 +31,8 @@ class LabelImpl : public Widget {
 };
 
 WidgetFactory Label(const std::string& label) {
-  return [label](Node* node) {
-    return std::make_unique<LabelImpl>(node, label);
+  return [label](Widget::Delegate* delegate) {
+    return std::make_unique<LabelImpl>(delegate, label);
   };
 }
 

@@ -2,123 +2,120 @@
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
 
-#include <smkflow/widget/Box.hpp>
 #include <smkflow/Constants.hpp>
+#include <smkflow/widget/BoxImpl.hpp>
 
 namespace smkflow {
 
-class BoxImpl : public Widget, public BoxInterface {
- public:
-  BoxImpl(Node* node, std::vector<WidgetFactory> children): Widget(node) {
-    for (auto& it : children)
-      children_.push_back(it(node));
-    children_size_.resize(children_.size());
+BoxImpl::BoxImpl(Delegate* delegate, std::vector<WidgetFactory> children)
+    : Widget(delegate) {
+  for (auto& it : children)
+    children_.push_back(it(delegate));
+  children_size_.resize(children_.size());
+}
+
+bool BoxImpl::Step(smk::Input* input, const glm::vec2& cursor) {
+  bool ret = false;
+  for (auto& it : children_)
+    ret |= it->Step(input, cursor);
+  if (ret)
+    return true;
+  return Widget::Step(input, cursor);
+}
+
+void BoxImpl::Draw(smk::RenderTarget* target) {
+  for (auto& child : children_)
+    child->Draw(target);
+}
+
+Widget* BoxImpl::ChildAt(int i) {
+  return children_.at(i).get();
+}
+int BoxImpl::ChildCount() {
+  return children_.size();
+}
+
+BoxImplVertical::BoxImplVertical(Delegate* delegate,
+                                 std::vector<WidgetFactory> children)
+    : BoxImpl(delegate, children) {}
+
+glm::vec2 BoxImplVertical::ComputeDimensions() {
+  requested_dimensions_ = glm::vec2(0.f, 0.f);
+  int i = 0;
+  for (auto& it : children_) {
+    auto child_dimension = it->ComputeDimensions();
+    requested_dimensions_.x =
+        std::max(requested_dimensions_.x, child_dimension.x);
+    requested_dimensions_.y += child_dimension.y;
+    children_size_[i++] = child_dimension.y;
   }
+  requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
+  return requested_dimensions_;
+}
 
-  void Step(smk::Input* input, const glm::vec2& cursor) override {
-    for(auto& it : children_)
-      it->Step(input, cursor);
+void BoxImplVertical::SetDimensions(glm::vec2 dimensions) {
+  Widget::SetDimensions(dimensions);
+  float space_left = dimensions.y - requested_dimensions_.y;
+  space_left /= children_.size();
+  int i = 0;
+  for (auto& it : children_)
+    it->SetDimensions({dimensions.x, children_size_[i++] + space_left});
+}
+
+void BoxImplVertical::SetPosition(glm::vec2 position) {
+  Widget::SetPosition(position);
+  for (auto& it : children_) {
+    it->SetPosition(position);
+    position.y += it->dimensions().y + size::widget_margin;
   }
+}
 
-  void Draw(smk::RenderTarget* target) override {
-    for (auto& child : children_)
-      child->Draw(target);
+BoxImplHorizontal::BoxImplHorizontal(Delegate* delegate,
+                                     std::vector<WidgetFactory> children)
+    : BoxImpl(delegate, children) {}
+
+glm::vec2 BoxImplHorizontal::ComputeDimensions() {
+  requested_dimensions_ = glm::vec2(0.f, 0.f);
+  int i = 0;
+  for (auto& it : children_) {
+    auto child_dimension = it->ComputeDimensions();
+    requested_dimensions_.y =
+        std::max(requested_dimensions_.y, child_dimension.y);
+    requested_dimensions_.x += child_dimension.x;
+    children_size_[i++] = child_dimension.x;
   }
+  requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
+  return requested_dimensions_;
+}
 
-  virtual Widget* ChildAt(int i) override { return children_.at(i).get();}
-  virtual int ChildCount() override { return children_.size();}
+void BoxImplHorizontal::SetDimensions(glm::vec2 dimensions) {
+  Widget::SetDimensions(dimensions);
+  float space_left = dimensions.x - requested_dimensions_.x;
+  space_left /= children_.size();
+  int i = 0;
+  for (auto& it : children_)
+    it->SetDimensions({children_size_[i++] + space_left, dimensions.y});
+}
 
- protected:
-  std::vector<std::unique_ptr<Widget>> children_;
-  std::vector<float> children_size_;
-  glm::vec2 requested_dimensions_;
-};
-
-class BoxImplVertical : public BoxImpl {
- public:
-  BoxImplVertical(Node* node, std::vector<WidgetFactory> children)
-      : BoxImpl(node, children) {}
-
-  glm::vec2 ComputeDimensions() override {
-    requested_dimensions_ = glm::vec2(0.f, 0.f);
-    int i = 0;
-    for (auto& it : children_) {
-      auto child_dimension = it->ComputeDimensions();
-      requested_dimensions_.x =
-          std::max(requested_dimensions_.x, child_dimension.x);
-      requested_dimensions_.y += child_dimension.y;
-      children_size_[i++] = child_dimension.y;
-    }
-    requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
-    return requested_dimensions_;
+void BoxImplHorizontal::SetPosition(glm::vec2 position) {
+  Widget::SetPosition(position);
+  for (auto& it : children_) {
+    it->SetPosition(position);
+    position.x += it->dimensions().x + size::widget_margin;
   }
-
-  void SetDimensions(glm::vec2 dimensions) override {
-    Widget::SetDimensions(dimensions);
-    float space_left = dimensions.y - requested_dimensions_.y;
-    space_left /= children_.size();
-    int i = 0;
-    for (auto& it : children_)
-      it->SetDimensions({dimensions.x, children_size_[i++] + space_left});
-  };
-
-  void SetPosition(glm::vec2 position) override {
-    Widget::SetPosition(position);
-    for (auto& it : children_) {
-      it->SetPosition(position);
-      position.y += it->dimensions().y + size::widget_margin;
-    }
-  };
-};
-
-class BoxImplHorizontal: public BoxImpl {
- public:
-  BoxImplHorizontal(Node* node, std::vector<WidgetFactory> children)
-      : BoxImpl(node, children) {}
-
-  glm::vec2 ComputeDimensions() override {
-    requested_dimensions_ = glm::vec2(0.f, 0.f);
-    int i = 0;
-    for (auto& it : children_) {
-      auto child_dimension = it->ComputeDimensions();
-      requested_dimensions_.y =
-          std::max(requested_dimensions_.y, child_dimension.y);
-      requested_dimensions_.x += child_dimension.x;
-      children_size_[i++] = child_dimension.x;
-    }
-    requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
-    return requested_dimensions_;
-  }
-
-  void SetDimensions(glm::vec2 dimensions) override {
-    Widget::SetDimensions(dimensions);
-    float space_left = dimensions.x - requested_dimensions_.x;
-    space_left /= children_.size();
-    int i = 0;
-    for (auto& it : children_)
-      it->SetDimensions({children_size_[i++] + space_left, dimensions.y});
-  };
-
-  void SetPosition(glm::vec2 position) override {
-    Widget::SetPosition(position);
-    for (auto& it : children_) {
-      it->SetPosition(position);
-      position.x += it->dimensions().x + size::widget_margin;
-    }
-  };
-};
+}
 
 // static
 WidgetFactory HBox(std::vector<WidgetFactory> children) {
-  return [=](Node* node) {
-    return std::make_unique<BoxImplHorizontal>(node, children);
+  return [=](Widget::Delegate* delegate) {
+    return std::make_unique<BoxImplHorizontal>(delegate, children);
   };
 }
 
 // static
 WidgetFactory VBox(std::vector<WidgetFactory> children) {
-  return [=](Node* node) {
-    return std::make_unique<BoxImplVertical>(node, children);
+  return [=](Widget::Delegate* delegate) {
+    return std::make_unique<BoxImplVertical>(delegate, children);
   };
 }
 

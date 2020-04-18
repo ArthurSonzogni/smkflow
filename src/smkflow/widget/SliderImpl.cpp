@@ -11,7 +11,6 @@
 #include <smk/Text.hpp>
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/Constants.hpp>
-#include <smkflow/NodeImpl.hpp>
 #include <smkflow/widget/Widget.hpp>
 #include <smkflow/widget/Slider.hpp>
 
@@ -23,8 +22,12 @@ const float handle_width = 8.f;
 
 class SliderImpl : public Widget, public SliderInterface {
  public:
-  SliderImpl(Node* node, float min, float max, float value, std::string format)
-      : Widget(node), min_(min), max_(max), value_(value), format_(format) {
+  SliderImpl(Delegate* delegate,
+             float min,
+             float max,
+             float value,
+             std::string format)
+      : Widget(delegate), min_(min), max_(max), value_(value), format_(format) {
     value_ = std::min(max_, std::max(min_, value_));
 
     track_ = smk::Shape::Square();
@@ -33,17 +36,15 @@ class SliderImpl : public Widget, public SliderInterface {
     computed_dimensions_ = {200.f, size::widget_height};
   }
 
-  smk::Font& Font() { return NodeImpl::From(node())->board()->font(); }
-
   // Widget implementation:
   glm::vec2 ComputeDimensions() override { return computed_dimensions_; }
 
-  void Step(smk::Input* input, const glm::vec2& cursor) override {
+  bool Step(smk::Input* input, const glm::vec2& cursor) override {
     auto position = Position();
     auto dimension = dimensions();
 
     if (cursor_capture_ && input->IsCursorReleased())
-      cursor_capture_.reset();
+      cursor_capture_.Invalidate();
 
     hover_ = cursor.x > position.x &&                //
              cursor.x < position.x + dimension.x &&  //
@@ -53,20 +54,21 @@ class SliderImpl : public Widget, public SliderInterface {
     focus_ = bool(cursor_capture_);
 
     if (hover_ && input->IsCursorPressed())
-      cursor_capture_ = node()->GetBoard()->CaptureCursor();
+      cursor_capture_ = delegate()->CaptureCursor();
 
     if (cursor_capture_) {
       hover_ = true;
       value_ = min_ + (cursor.x - position.x) * (max_ - min_) / dimension.x;
       value_ = std::max(min_, std::min(max_, value_));
     }
+    return Widget::Step(input, cursor);
   }
 
   void Draw(smk::RenderTarget* target) override {
     auto position = Position();
     auto dimension = dimensions();
 
-    text_ = smk::Text(Font(), fmt::format(format_, value_));
+    text_ = smk::Text(delegate()->Font(), fmt::format(format_, value_));
 
     track_.SetPosition(position);
     track_.SetScale(dimension);
@@ -119,8 +121,8 @@ class SliderImpl : public Widget, public SliderInterface {
 
 // static
 WidgetFactory Slider(float min, float max, float value, std::string format) {
-  return [=](Node* node) {
-    return std::make_unique<SliderImpl>(node, min, max, value, format);
+  return [=](Widget::Delegate* delegate) {
+    return std::make_unique<SliderImpl>(delegate, min, max, value, format);
   };
 }
 

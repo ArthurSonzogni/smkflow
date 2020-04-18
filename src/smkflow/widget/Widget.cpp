@@ -11,11 +11,24 @@ void Widget::SetDimensions(glm::vec2 dimensions) {
 }
 
 glm::vec2 Widget::Position() {
-  return NodeImpl::From(node_)->GetPosition() + position_;
+  return delegate_->Position() + position_;
 }
 
-void Widget::InvalidateDimensions() {
-  NodeImpl::From(node_)->InvalidateLayout();
+void Widget::InvalidateLayout() {
+  delegate_->InvalidateLayout();
+}
+
+bool Widget::Step(smk::Input* input, const glm::vec2& cursor) {
+  if (!input->IsCursorPressed())
+    return false;
+
+  auto position = Position();
+  auto dimension = dimensions();
+  bool hover = cursor.x > position.x &&                //
+               cursor.x < position.x + dimension.x &&  //
+               cursor.y > position.y &&                //
+               cursor.y < position.y + dimension.y;    //
+  return hover;
 }
 
 }  // namespace smkflow

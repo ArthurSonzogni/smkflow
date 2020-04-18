@@ -29,7 +29,6 @@ NodeImpl* BoardImpl::Create(const model::Node& model) {
 
 void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
   input_ = input;
-  (void)target;
 
   // For some reasons the scrolling offset in web browsers is 100x less than the
   // one on desktop?
@@ -55,16 +54,18 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
   for (const auto& node : nodes_)
     node->Step(input_, cursor_);
 
+  Menu();
+
   MoveConnector();
   AcquireView();
   MoveView();
+
 
   PushNodeAppart();
 }
 
 void BoardImpl::PushNodeAppart() {
-
-  if (cursor_captured_) {
+  if (cursor_capturable_) {
     push_ = 0.f;
     return;
   }
@@ -166,7 +167,7 @@ void BoardImpl::ReleaseConnector() {
   if (!input_->IsCursorReleased())
     return;
 
-  cursor_captured_for_connector_.reset();
+  cursor_captured_for_connector_.Invalidate();
 
   SlotImpl* end_slot = FindSlot(cursor_);
   if (!end_slot)
@@ -219,7 +220,7 @@ void BoardImpl::ReleaseView() {
   if (!input_->IsCursorReleased())
     return;
 
-  cursor_captured_for_dragging_view_.reset();
+  cursor_captured_for_dragging_view_.Invalidate();
 }
 
 void BoardImpl::Draw(smk::RenderTarget* target) {
@@ -264,21 +265,12 @@ SlotImpl* BoardImpl::FindSlot(const glm::vec2& position) {
   return nullptr;
 }
 
-class CursorCaptureImpl : public CursorCaptureInterface {
- public:
-  CursorCaptureImpl(bool* value) : value_(value) {}
-  ~CursorCaptureImpl() override { *value_ = false; }
-
- private:
-  bool* value_;
-};
-
 CursorCapture BoardImpl::CaptureCursor() {
-  if (cursor_captured_)
-    return nullptr;
+  return cursor_capturable_.Capture();
+}
 
-  cursor_captured_ = true;
-  return std::make_unique<CursorCaptureImpl>(&cursor_captured_);
+void BoardImpl::Menu() {
+
 }
 
 }  // namespace smkflow

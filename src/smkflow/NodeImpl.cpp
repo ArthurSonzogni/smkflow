@@ -116,8 +116,8 @@ void NodeImpl::Layout() {
   y = y_b;
   if (widget_) {
     auto dimensions = widget_->ComputeDimensions();
-    widget_->SetPosition({x, y});
     widget_->SetDimensions({widget_width, dimensions.y});
+    widget_->SetPosition({x, y});
     y += dimensions.y + size::widget_margin;
   }
 
@@ -158,7 +158,7 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
   position_ += speed_;
   speed_ *= 0.2f;
   if (input->IsCursorReleased()) {
-    cursor_captured_.reset();
+    cursor_captured_.Invalidate();
   }
 
   if (layout_invalidated_)
@@ -227,6 +227,14 @@ Slot* NodeImpl::OutputAt(int i) {
 }
 Widget* NodeImpl::widget() {
   return widget_.get();
+}
+
+smk::Font& NodeImpl::Font() {
+  return board_->font();
+}
+
+CursorCapture NodeImpl::CaptureCursor() {
+  return board_->CaptureCursor();
 }
 
 }  // namespace smkflow

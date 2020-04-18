@@ -16,8 +16,6 @@ class Node;
 class Slot;
 class Connector;
 class Widget;
-class CursorCaptureInterface;
-using CursorCapture = std::unique_ptr<CursorCaptureInterface>;
 
 class Board {
  public:
@@ -76,11 +74,6 @@ class Node {
   virtual Slot* OutputAt(int i) = 0;
 
   virtual Widget* widget() = 0;
-};
-
-class CursorCaptureInterface {
- public:
-  virtual ~CursorCaptureInterface() = default;
 };
 
 }  // namespace smkflow

@@ -7,20 +7,28 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include <memory>
+#include <smkflow/CursorCapture.hpp>
 
 namespace smk {
 class RenderTarget;
 class Input;
+class Font;
 }  // namespace smk
 
 namespace smkflow {
-class Node;
-class Widget;
-using WidgetFactory = std::function<std::unique_ptr<Widget>(Node*)>;
 
 class Widget {
  public:
-  Widget(Node* node) : node_(node) {}
+  class Delegate {
+   public:
+    virtual glm::vec2 Position() = 0;
+    virtual void InvalidateLayout() = 0;
+    virtual smk::Font& Font() = 0;
+    virtual CursorCapture CaptureCursor() = 0;
+    virtual bool IsInsideMenu() { return false; }
+  };
+
+  Widget(Delegate* delegate) : delegate_(delegate) {}
   virtual ~Widget() = default;
 
   // Layout:
@@ -30,23 +38,25 @@ class Widget {
   virtual glm::vec2 ComputeDimensions() = 0;
   virtual void SetDimensions(glm::vec2 dimensions);
   virtual void SetPosition(glm::vec2 position) { position_ = position; }
-  void InvalidateDimensions();
+  void InvalidateLayout();
 
   // Interactivity:
-  virtual void Step(smk::Input*, const glm::vec2& /* cursor */) {}
+  virtual bool Step(smk::Input*, const glm::vec2& /* cursor */);
 
   // Render:
   virtual void Draw(smk::RenderTarget*) {}
 
  protected:
-  Node* node() { return node_; }
+  Delegate* delegate() { return delegate_; }
 
  private:
-  Node* node_;
+  Delegate* delegate_;
 
   glm::vec2 position_;
   glm::vec2 dimensions_;
 };
+
+using WidgetFactory = std::function<std::unique_ptr<Widget>(Widget::Delegate*)>;
 
 }  // namespace smkflow
 

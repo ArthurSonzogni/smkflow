@@ -9,7 +9,8 @@
 namespace smkflow {
 
 // Constructor:
-WidgetFactory Input(const std::string& value);
+WidgetFactory Input(const std::string& placeholder,
+                    const std::string& input = "");
 
 // Interface:
 class InputInterface{

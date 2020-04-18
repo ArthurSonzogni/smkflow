@@ -8,6 +8,7 @@
 #include <smkflow/Elements.hpp>
 #include <smkflow/Model.hpp>
 #include <smkflow/NodeImpl.hpp>
+#include <smkflow/CursorCapture.hpp>
 
 namespace smkflow {
 
@@ -50,6 +51,10 @@ class BoardImpl : public Board {
   void MoveConnector();
   void ReleaseConnector();
 
+  // Right click ---------------------------------------------------------------
+  void Menu();
+  CursorCapture cursor_captured_for_menu_;
+
   glm::vec2 connector_in_;
   glm::vec2 connector_in_pushed_;
   glm::vec2 connector_out_pushed_;
@@ -65,7 +70,7 @@ class BoardImpl : public Board {
 
   smk::Font font_;
 
-  bool cursor_captured_ = false;
+  CursorCapturable cursor_capturable_;
 
   smk::Input* input_;
   glm::vec2 cursor_;

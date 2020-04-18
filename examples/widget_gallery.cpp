@@ -12,6 +12,7 @@
 #include <smkflow/widget/Label.hpp>
 #include <smkflow/widget/Slider.hpp>
 #include <smkflow/widget/Widget.hpp>
+#include <smkflow/widget/Menu.hpp>
 
 #include "asset.hpp"
 
@@ -52,9 +53,9 @@ auto node_label = model::Node{
     {},
     {},
     VBox({
-        HBox({Label("X:"), Slider(0, 1, 0.5, "{:.2f}")}),
-        HBox({Label("Y:"), Slider(0, 1, 0.5, "{:.2f}")}),
-        HBox({Label("Z:"), Slider(0, 1, 0.5, "{:.2f}")}),
+        HBox({Label("R:"), Slider(0, 1, 0.5, "{:.2f}")}),
+        HBox({Label("G:"), Slider(0, 1, 0.5, "{:.2f}")}),
+        HBox({Label("B:"), Slider(0, 1, 0.5, "{:.2f}")}),
     }),
 };
 
@@ -85,11 +86,47 @@ auto node_box = model::Node{
     }),
 };
 
+auto node_menu = model::Node{
+    0,
+    "Menu",
+    color_node,
+    {},
+    {},
+    Menu("menu", {
+        Menu("File", {
+            Label("1.html"),
+            Label("2.html"),
+            Label("3.html"),
+            Label("4.html"),
+            Label("5.html"),
+            Label("6.html"),
+            Label("7.html"),
+            Label("8.html"),
+            Label("9.html"),
+        }),
+        Menu("Edition", {
+            Slider(),
+            Slider(0, 1, 0.5, "{:.2f}"),
+        }),
+        Menu("Display", {
+            Menu("Sliders", {
+              Slider(0, 1, 0.5, "{:.2f}"),
+              Slider(0, 1, 0.5, "{:.2f}"),
+            }),
+            Menu("Input", {
+              Input("input 1"),
+              Input("input 2"),
+            }),
+        }),
+    }),
+};
+
 auto my_board = model::Board{
     {
         node_sliders,
         node_input,
         node_box,
+        node_menu,
     },
     asset::arial_ttf,
 };
@@ -102,6 +139,7 @@ int main() {
   board->Create(node_sliders)->SetPosition({+150, -150});
   board->Create(node_box)->SetPosition({-150, +100});
   board->Create(node_label)->SetPosition({-150, +300});
+  board->Create(node_menu)->SetPosition({+150, +300});
 
   window.ExecuteMainLoop([&] {
     window.Clear(color::background);
