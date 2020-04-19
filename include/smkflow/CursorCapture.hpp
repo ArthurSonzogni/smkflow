@@ -19,7 +19,7 @@ class CursorCapture {
   void operator=(CursorCapture&& o);
 
   void Invalidate();
-  ~CursorCapture();
+  virtual ~CursorCapture();
 
  private:
   CursorCapturable* b = nullptr;
@@ -33,7 +33,6 @@ class CursorCapturable {
 
  private:
   friend CursorCapture;
-  void Move(CursorCapture* c);
   CursorCapture* cursor_capture_ = nullptr;
 };
 

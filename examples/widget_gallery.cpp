@@ -123,7 +123,7 @@ auto node_menu = model::Node{
 
 auto my_board = model::Board{
     {
-        MenuEntry("Sliders", CreateNode(node_input)),
+        MenuEntry("Sliders", CreateNode(node_sliders)),
         MenuEntry("Box", CreateNode(node_box)),
         MenuEntry("Input", CreateNode(node_input)),
         MenuEntry("Label", CreateNode(node_label)),

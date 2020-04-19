@@ -29,10 +29,8 @@ class MenuEntryImpl : public LabelImpl, public ActionContext {
     focused_ = hover_ && input->IsCursorHold();
     LabelImpl::Step(input, cursor_);
 
-    if (hover_ && input->IsCursorPressed()) {
+    if (hover_ && input->IsCursorPressed())
       action_(this);
-      return false;
-    }
 
     return Widget::Step(input, cursor_);
   }

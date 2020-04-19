@@ -1,7 +1,6 @@
 // Copyright 2020 Arthur Sonzogni. All rights reserved.
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
-#include <iostream>
 #include <smk/Font.hpp>
 #include <smk/Shape.hpp>
 #include <smkflow/BoardImpl.hpp>
@@ -45,7 +44,6 @@ NodeImpl::NodeImpl(BoardImpl* board, const model::Node& model) : board_(board) {
 
 void NodeImpl::InvalidateLayout() {
   layout_invalidated_ = true;
-  std::cerr << "Invalidated" << std::endl;
 }
 
 void NodeImpl::Layout() {

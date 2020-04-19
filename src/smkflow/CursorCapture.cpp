@@ -13,16 +13,21 @@ CursorCapture::CursorCapture(CursorCapture&& o) {
 }
 void CursorCapture::operator=(CursorCapture&& o) {
   std::swap(b, o.b);
-  if (b)
-    b->Move(this);
+  if (b) {
+    b->cursor_capture_ = this;
+  }
+  if (o.b) {
+    o.b->cursor_capture_ = &o;
+  }
 }
 void CursorCapture::Invalidate() {
-  this->~CursorCapture();
+  if (b) {
+    b->cursor_capture_ = nullptr;
+    b = nullptr;
+  }
 }
 CursorCapture::~CursorCapture() {
-  if (b)
-    b->cursor_capture_ = nullptr;
-  b = nullptr;
+  Invalidate();
 }
 
 CursorCapture CursorCapturable::Capture() {
@@ -31,10 +36,6 @@ CursorCapture CursorCapturable::Capture() {
 void CursorCapturable::Invalidate() {
   if (cursor_capture_)
     cursor_capture_->Invalidate();
-}
-
-void CursorCapturable::Move(CursorCapture* c) {
-  cursor_capture_ = c;
 }
 
 CursorCapturable::operator bool() {

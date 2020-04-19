@@ -1,7 +1,6 @@
 // Copyright 2020 Arthur Sonzogni. All rights reserved.
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
-#include <iostream>
 #include <smk/Shape.hpp>
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/ConnectorImpl.hpp>
@@ -9,7 +8,6 @@
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
 #include <smkflow/widget/Box.hpp>
-#include <fmt/printf.h>
 
 namespace smkflow {
 
@@ -53,6 +51,7 @@ BoardImpl::BoardImpl(const model::Board& model) {
 }
 
 NodeImpl* BoardImpl::Create(const model::Node& model) {
+  cursor_captured_for_menu_.Invalidate();
   nodes_.push_back(std::make_unique<NodeImpl>(this, model));
   return nodes_.back().get();
 }
@@ -292,7 +291,6 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
   if (cursor_captured_for_menu_) {
     auto pos = menu_widget_->Position();
     auto dim = menu_widget_->dimensions();
-    fmt::print("{:.0f} {:.0f} {:.0} {:.0}\n", pos.x, pos.y, dim.x, dim.y);
     square_.SetPosition(pos - size::widget_margin * glm::vec2(1.f));
     square_.SetScale(dim + size::widget_margin * glm::vec2(2.f));
     square_.SetColor(glm::vec4(0.f, 0.f, 0.f, 1.f));
