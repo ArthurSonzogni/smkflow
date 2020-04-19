@@ -36,7 +36,7 @@ class NodeImpl : public Node, public Widget::Delegate {
 
   SlotImpl* FindSlot(const glm::vec2& position);
 
-  BoardImpl* board() { return board_; }
+  BoardImpl* boardImpl() { return board_; }
 
   void Push(glm::vec2 direction);
   glm::vec2 position() { return position_; }
@@ -57,6 +57,7 @@ class NodeImpl : public Node, public Widget::Delegate {
   void InvalidateLayout() override;
   smk::Font& Font() override;
   CursorCapture CaptureCursor() override;
+  Board* board() override;
 
  private:
   BoardImpl* board_;

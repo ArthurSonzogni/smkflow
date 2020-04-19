@@ -9,29 +9,31 @@ project(smkflow
 
 add_library(smkflow STATIC
   include/smkflow/Constants.hpp
+  include/smkflow/CursorCapture.hpp
   include/smkflow/Elements.hpp
   include/smkflow/Model.hpp
+  include/smkflow/widget/Action.hpp
   include/smkflow/widget/Box.hpp
   include/smkflow/widget/Input.hpp
   include/smkflow/widget/Label.hpp
   include/smkflow/widget/Menu.hpp
   include/smkflow/widget/Slider.hpp
   include/smkflow/widget/Widget.hpp
-  include/smkflow/CursorCapture.hpp
-
-  src/smkflow/CursorCapture.cpp
   src/smkflow/BoardImpl.cpp
   src/smkflow/BoardImpl.hpp
   src/smkflow/ConnectorImpl.cpp
   src/smkflow/ConnectorImpl.hpp
+  src/smkflow/CursorCapture.cpp
   src/smkflow/NodeImpl.cpp
   src/smkflow/NodeImpl.hpp
   src/smkflow/SlotImpl.cpp
   src/smkflow/SlotImpl.hpp
   src/smkflow/widget/BoxImpl.cpp
-  src/smkflow/widget/BoxImpl.hpp
+  src/smkflow/widget/BoxImpl.cpp
   src/smkflow/widget/InputImpl.cpp
   src/smkflow/widget/LabelImpl.cpp
+  src/smkflow/widget/LabelImpl.hpp
+  src/smkflow/widget/MenuEntryImpl.cpp
   src/smkflow/widget/MenuImpl.cpp
   src/smkflow/widget/SliderImpl.cpp
   src/smkflow/widget/Widget.cpp

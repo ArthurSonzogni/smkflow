@@ -16,6 +16,7 @@ class Font;
 }  // namespace smk
 
 namespace smkflow {
+class Board;
 
 class Widget {
  public:
@@ -26,6 +27,7 @@ class Widget {
     virtual smk::Font& Font() = 0;
     virtual CursorCapture CaptureCursor() = 0;
     virtual bool IsInsideMenu() { return false; }
+    virtual Board* board() = 0;
   };
 
   Widget(Delegate* delegate) : delegate_(delegate) {}

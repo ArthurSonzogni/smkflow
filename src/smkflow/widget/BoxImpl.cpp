@@ -49,7 +49,8 @@ glm::vec2 BoxImplVertical::ComputeDimensions() {
     requested_dimensions_.y += child_dimension.y;
     children_size_[i++] = child_dimension.y;
   }
-  requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
+  if (children_.size())
+    requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
   return requested_dimensions_;
 }
 
@@ -84,7 +85,8 @@ glm::vec2 BoxImplHorizontal::ComputeDimensions() {
     requested_dimensions_.x += child_dimension.x;
     children_size_[i++] = child_dimension.x;
   }
-  requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
+  if (children_.size())
+    requested_dimensions_ += (children_.size() - 1) * size::widget_margin;
   return requested_dimensions_;
 }
 

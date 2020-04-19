@@ -33,7 +33,6 @@ auto node_A = smkflow::model::Node{
 auto my_board = smkflow::model::Board{
     // Node list:
     {
-        node_A,
     },
     // Font to be used:
     asset::arial_ttf,

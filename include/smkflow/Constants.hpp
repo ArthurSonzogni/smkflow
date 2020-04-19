@@ -25,8 +25,8 @@ const auto text = glm::vec4(1.f, 1.f, 1.f, 1.f);
 const auto connector_background = glm::vec4(0.15f, 0.15f, 0.15f, 0.5);
 
 const auto widget_background = glm::vec4(0.5f, 0.5f, 0.5f, 0.5f);
-const auto widget_background_hover = glm::vec4(0.4f, 0.4f, 0.4f, 0.6f);
-const auto widget_background_focus = glm::vec4(0.1f, 0.1f, 0.1f, 0.8f);
+const auto widget_background_hover = glm::vec4(0.2f, 0.2f, 0.2f, 0.8f);
+const auto widget_background_focus = glm::vec4(0.1f, 0.1f, 0.1f, 1.f);
 
 const auto widget_foreground = glm::vec4(0.5f, 0.5f, 0.9f, 1.0f);
 const auto widget_foreground_hover = glm::vec4(0.3f, 0.3f, 1.0f, 0.9f);

@@ -8,8 +8,35 @@
 #include <smkflow/Constants.hpp>
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
+#include <smkflow/widget/Box.hpp>
+#include <fmt/printf.h>
 
 namespace smkflow {
+
+class BoardImpl::MenuDelegate : public Widget::Delegate {
+  public:
+   MenuDelegate(BoardImpl* board) : board_(board) {}
+   glm::vec2 Position() override { return {0.f, 0.f}; }
+   void InvalidateLayout() override { invalidated_ = true; }
+   smk::Font& Font() override { return board_->font();}
+   CursorCapture CaptureCursor() override {
+     cursor_capturable_.Invalidate();
+     return cursor_capturable_.Capture();
+   }
+   bool IsInsideMenu() override { return true; }
+   bool Validate() {
+     bool ret = invalidated_;
+     invalidated_ = false;
+     return ret;
+   }
+   BoardImpl* board() override { return board_; }
+
+  private:
+   bool invalidated_ = true;
+   BoardImpl* board_;
+   CursorCapturable cursor_capturable_;
+};
+
 
 // static
 std::unique_ptr<Board> Board::Create(const model::Board& model) {
@@ -20,6 +47,9 @@ BoardImpl::~BoardImpl() = default;
 
 BoardImpl::BoardImpl(const model::Board& model) {
   font_ = smk::Font(model.font, 30);
+  menu_delegate_ = std::make_unique<MenuDelegate>(this);
+  menu_widget_ = VBox(model.context_widgets_)(menu_delegate_.get());
+  square_ = smk::Shape::Square();
 }
 
 NodeImpl* BoardImpl::Create(const model::Node& model) {
@@ -60,7 +90,6 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
   AcquireView();
   MoveView();
 
-
   PushNodeAppart();
 }
 
@@ -80,7 +109,7 @@ void BoardImpl::PushNodeAppart() {
   });
 
   const float margin = 20.f;
-  for(size_t a = 0; a<h_nodes.size(); ++a) {
+  for (size_t a = 0; a < h_nodes.size(); ++a) {
     NodeImpl* node_a = nodes_.at(a).get();
     glm::vec2 a1 = node_a->position() - glm::vec2(margin, margin);
     glm::vec2 a2 = a1 + node_a->dimension() + 2.f * glm::vec2(margin, margin);
@@ -98,10 +127,14 @@ void BoardImpl::PushNodeAppart() {
 
       // clang-format on
       glm::vec2 dir;
-      if (b1.x - a2.x == dist) dir = glm::vec2(dist, 0.f);
-      if (a1.x - b2.x == dist) dir = glm::vec2(-dist, 0.f);
-      if (b1.y - a2.y == dist) dir = glm::vec2(0.f, dist);
-      if (a1.y - b2.y == dist) dir = glm::vec2(0.f, -dist);
+      if (b1.x - a2.x == dist)
+        dir = glm::vec2(dist, 0.f);
+      if (a1.x - b2.x == dist)
+        dir = glm::vec2(-dist, 0.f);
+      if (b1.y - a2.y == dist)
+        dir = glm::vec2(0.f, dist);
+      if (a1.y - b2.y == dist)
+        dir = glm::vec2(0.f, -dist);
       // clang-format off
 
       glm::vec2 ca = node_a->position() + node_a->dimension() * 0.5f;
@@ -254,6 +287,19 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
     target->Draw(background_);
     target->Draw(foreground_);
   }
+
+
+  if (cursor_captured_for_menu_) {
+    auto pos = menu_widget_->Position();
+    auto dim = menu_widget_->dimensions();
+    fmt::print("{:.0f} {:.0f} {:.0} {:.0}\n", pos.x, pos.y, dim.x, dim.y);
+    square_.SetPosition(pos - size::widget_margin * glm::vec2(1.f));
+    square_.SetScale(dim + size::widget_margin * glm::vec2(2.f));
+    square_.SetColor(glm::vec4(0.f, 0.f, 0.f, 1.f));
+    target->Draw(square_);
+
+    menu_widget_->Draw(target);
+  }
 }
 
 SlotImpl* BoardImpl::FindSlot(const glm::vec2& position) {
@@ -270,7 +316,21 @@ CursorCapture BoardImpl::CaptureCursor() {
 }
 
 void BoardImpl::Menu() {
+  if (!cursor_captured_for_menu_) {
+    if (input_->IsMousePressed(GLFW_MOUSE_BUTTON_2))
+        cursor_captured_for_menu_ = CaptureCursor();
+    if (!cursor_captured_for_menu_)
+      return;
+    menu_widget_->SetDimensions(menu_widget_->ComputeDimensions());
+    menu_widget_->SetPosition(cursor_);
+  }
 
+  if (menu_delegate_->Validate())
+    menu_widget_->SetDimensions(menu_widget_->ComputeDimensions());
+
+  bool clicked = menu_widget_->Step(input_, cursor_);
+  if (input_->IsCursorPressed() && !clicked)
+    cursor_captured_for_menu_.Invalidate();
 }
 
 }  // namespace smkflow

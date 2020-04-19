@@ -5,6 +5,7 @@
 #define SMKFLOW_WIDGET_MENU_HPP
 
 #include <smkflow/widget/Widget.hpp>
+#include <smkflow/widget/Action.hpp>
 
 namespace smkflow {
 
@@ -22,11 +23,10 @@ namespace smkflow {
 /// });
 /// ~~~
 
+WidgetFactory MenuEntry(const std::string& label, Action);
 WidgetFactory Menu(const std::string& label,
                    std::vector<WidgetFactory> children);
-WidgetFactory MenuEntry(const std::string& label, std::function<void()>);
 
 }  // namespace smkflow
 
-#endif /* end of include guard: SMKFLOW_WIDGET_MENU_HPP \
-        */
+#endif // end of include guard: SMKFLOW_WIDGET_MENU_HPP

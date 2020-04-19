@@ -138,6 +138,7 @@ class MenuImpl : public Widget, public Widget::Delegate {
     return cursor_capturable_.Capture();
   }
   bool IsInsideMenu() override { return true; }
+  Board* board() { return delegate()->board(); }
 
  private:
   std::unique_ptr<smkflow::BoxImplVertical> children_;
@@ -156,6 +157,5 @@ WidgetFactory Menu(const std::string& label, std::vector<WidgetFactory> children
     return std::make_unique<MenuImpl>(delegate, label, children);
   };
 }
-
 
 }  // namespace smkflow

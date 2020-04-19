@@ -237,4 +237,8 @@ CursorCapture NodeImpl::CaptureCursor() {
   return board_->CaptureCursor();
 }
 
+Board* NodeImpl::board() {
+  return board_;
+}
+
 }  // namespace smkflow

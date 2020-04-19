@@ -12,7 +12,6 @@
 #include <smkflow/widget/Box.hpp>
 #include <smkflow/widget/Input.hpp>
 #include <smkflow/widget/Slider.hpp>
-#include <smkflow/widget/Menu.hpp>
 
 #include "asset.hpp"
 
@@ -109,11 +108,6 @@ auto node_number = smkflow::model::Node{
 
 auto my_board = smkflow::model::Board{
     {
-      smkflow::MenuEntry("Number", smkflow::CreateNode(node_number)),
-      smkflow::MenuEntry("Add", smkflow::CreateNode(node_add)),
-      smkflow::MenuEntry("Substract", smkflow::CreateNode(node_substract)),
-      smkflow::MenuEntry("Multiply", smkflow::CreateNode(node_multiply)),
-      smkflow::MenuEntry("Divide", smkflow::CreateNode(node_divide)),
     },
     asset::arial_ttf,
 };
@@ -169,10 +163,12 @@ int main() {
   };
 
   // Instanciate some Node based on the model.
-  int x = -nodes.size() / 2;
+  int x = nodes.size() / 2;
   for (const auto& node_model : nodes) {
-    smkflow::Node* node = board->Create(node_model);
-    node->SetPosition({200 * x, 0});
+    for (int y = -30; y < 30; ++y) {
+      smkflow::Node* node = board->Create(node_model);
+      node->SetPosition({30 * x, 30 * y});
+    }
     ++x;
   }
 

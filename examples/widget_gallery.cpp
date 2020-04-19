@@ -94,15 +94,15 @@ auto node_menu = model::Node{
     {},
     Menu("menu", {
         Menu("File", {
-            Label("1.html"),
-            Label("2.html"),
-            Label("3.html"),
-            Label("4.html"),
-            Label("5.html"),
-            Label("6.html"),
-            Label("7.html"),
-            Label("8.html"),
-            Label("9.html"),
+            MenuEntry("1.html", ActionNone()),
+            MenuEntry("2.html", ActionNone()),
+            MenuEntry("3.html", ActionNone()),
+            MenuEntry("4.html", ActionNone()),
+            MenuEntry("5.html", ActionNone()),
+            MenuEntry("6.html", ActionNone()),
+            MenuEntry("7.html", ActionNone()),
+            MenuEntry("8.html", ActionNone()),
+            MenuEntry("9.html", ActionNone()),
         }),
         Menu("Edition", {
             Slider(),
@@ -123,10 +123,10 @@ auto node_menu = model::Node{
 
 auto my_board = model::Board{
     {
-        node_sliders,
-        node_input,
-        node_box,
-        node_menu,
+        MenuEntry("Sliders", CreateNode(node_input)),
+        MenuEntry("Box", CreateNode(node_box)),
+        MenuEntry("Input", CreateNode(node_input)),
+        MenuEntry("Label", CreateNode(node_label)),
     },
     asset::arial_ttf,
 };

@@ -5,10 +5,10 @@
 #define EDITOR_BOARD_HPP
 
 #include <smk/Font.hpp>
+#include <smkflow/CursorCapture.hpp>
 #include <smkflow/Elements.hpp>
 #include <smkflow/Model.hpp>
 #include <smkflow/NodeImpl.hpp>
-#include <smkflow/CursorCapture.hpp>
 
 namespace smkflow {
 
@@ -33,7 +33,6 @@ class BoardImpl : public Board {
   CursorCapture CaptureCursor() override;
 
  private:
-
   void PushNodeAppart();
 
   // Move / Zoom the view ------------------------------------------------------
@@ -53,7 +52,9 @@ class BoardImpl : public Board {
 
   // Right click ---------------------------------------------------------------
   void Menu();
+  std::unique_ptr<Widget> menu_widget_;
   CursorCapture cursor_captured_for_menu_;
+  smk::Transformable square_;
 
   glm::vec2 connector_in_;
   glm::vec2 connector_in_pushed_;
@@ -76,6 +77,10 @@ class BoardImpl : public Board {
   glm::vec2 cursor_;
 
   float push_ = 0.f;
+
+  class MenuDelegate;
+  std::unique_ptr<MenuDelegate> menu_delegate_;
+  friend class MenuDelegate;
 };
 
 }  // namespace smkflow

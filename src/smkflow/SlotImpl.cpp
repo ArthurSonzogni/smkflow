@@ -88,7 +88,7 @@ void SlotImpl::SetText(const std::string& text) {
   if (text_ == text)
     return;
   text_ = text;
-  label_ = smk::Text(node_->board()->font(), text_);
+  label_ = smk::Text(node_->boardImpl()->font(), text_);
   auto center = label_.ComputeDimensions();
   center.y *= 0.5;
   if (IsRight())
