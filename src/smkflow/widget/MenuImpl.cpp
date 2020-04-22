@@ -120,13 +120,13 @@ class MenuImpl : public Widget, public Widget::Delegate {
   glm::vec2 Position() override {
     return delegate()->Position();
   }
-  void InvalidateLayout() {
+  void InvalidateLayout() override {
     return delegate()->InvalidateLayout();
   }
-  smk::Font& Font() {
+  smk::Font& Font() override {
     return delegate()->Font();
   }
-  CursorCapture CaptureCursor() {
+  CursorCapture CaptureCursor() override {
     if (!cursor_capture_) {
       cursor_capture_ = delegate()->CaptureCursor();
     }
@@ -136,7 +136,7 @@ class MenuImpl : public Widget, public Widget::Delegate {
     return cursor_capturable_.Capture();
   }
   bool IsInsideMenu() override { return true; }
-  Board* board() { return delegate()->board(); }
+  Board* board() override { return delegate()->board(); }
 
  private:
   std::unique_ptr<smkflow::BoxImplVertical> children_;

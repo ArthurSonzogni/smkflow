@@ -3,7 +3,7 @@
 
 namespace smkflow {
 namespace model {
-class Node;
+struct Node;
 }
 
 class ActionContext {

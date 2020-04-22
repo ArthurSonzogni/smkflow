@@ -48,8 +48,8 @@ class MenuEntryImpl : public LabelImpl, public ActionContext {
     LabelImpl::Draw(target);
   }
 
-  Board* board() { return delegate()->board(); }
-  glm::vec2 cursor() { return cursor_; }
+  Board* board() override { return delegate()->board(); }
+  glm::vec2 cursor() override { return cursor_; }
 
  private:
   glm::vec2 cursor_;

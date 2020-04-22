@@ -22,12 +22,13 @@ class Widget {
  public:
   class Delegate {
    public:
-    virtual glm::vec2 Position() = 0;
-    virtual void InvalidateLayout() = 0;
-    virtual smk::Font& Font() = 0;
+    virtual ~Delegate() = default;
+    virtual Board* board() = 0;
     virtual CursorCapture CaptureCursor() = 0;
     virtual bool IsInsideMenu() { return false; }
-    virtual Board* board() = 0;
+    virtual glm::vec2 Position() = 0;
+    virtual smk::Font& Font() = 0;
+    virtual void InvalidateLayout() = 0;
   };
 
   Widget(Delegate* delegate) : delegate_(delegate) {}
