@@ -3,6 +3,7 @@
 // the LICENSE file.
 
 #include <smkflow/Constants.hpp>
+#include <algorithm>
 #include <smkflow/widget/BoxImpl.hpp>
 
 namespace smkflow {

@@ -3,12 +3,14 @@
 // the LICENSE file.
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
+#include <algorithm>
 #include <smk/Shape.hpp>
 #include <smk/Text.hpp>
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/Constants.hpp>
 #include <smkflow/widget/Input.hpp>
 #include <smkflow/widget/Widget.hpp>
+#include <algorithm>
 
 namespace smkflow {
 
