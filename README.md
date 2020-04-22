@@ -4,19 +4,32 @@
 
 ![logo][logo]
 
-SMKFLOW is a node editor in C++ compatible with WebAssembly using [SMK][smk]
+[![travis][badge.travis]][travis]
+[![issues][badge.issues]][issues]
+[![license][badge.license]][license]
+[![contributors][badge.contributors]][contributors]
 
-**status**: experimental. Expect regular change in the API for the next few months.
-If you need new features, please ask on Github.
+[badge.travis]: https://img.shields.io/travis/com/arthursonzogni/smkflow
+[badge.issues]: https://img.shields.io/github/issues-raw/arthursonzogni/smkflow
+[badge.license]: https://img.shields.io/github/license/arthursonzogni/smkflow?color=black
+[badge.contributors]: https://img.shields.io/github/contributors/arthursonzogni/smkflow?color=blue
+
+[travis]: https://travis-ci.com/ArthurSonzogni/smkflow
+[issues]: https://github.com/ArthurSonzogni/smkflow/issues
+[license]: http://opensource.org/licenses/MIT
+[contributors]: https://github.com/ArthurSonzogni/smkflow/graphs/contributors
+
+SMKFLOW is a node editor in C++ compatible with WebAssembly using [SMK][smk]
 
 **Features**:
 - Compatible with WebAssembly.
 - Use CMake FetchContent. You don't have to download anything. Just use the
   CMake snippet below:
+  
+**Warning**. This is an active project. Please do not expect the API to be stable for the next few months.
 
 Examples/Demo:
 ---------
-
 Use the [./examples/](./examples/) directory. This produce the following
 webassembly [demo](http://arthursonzogni.github.io/smkflow/examples/index.html)
 
