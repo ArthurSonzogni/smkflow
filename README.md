@@ -1,8 +1,13 @@
+[smk]: https://github.com/ArthurSonzogni/smk
+[smkflow]: https://github.com/ArthurSonzogni/smkflow
+[logo]: ./logo.png
+
+![logo][logo]
+
 smkflow
 =======
 
-A dataflow node editor in C++ compatible with WebAssembly using
-[SMK](https://github.com/ArthurSonzogni/smk)
+A dataflow node editor in C++ compatible with WebAssembly using [SMK][smk]
 
 Features:
 --------
