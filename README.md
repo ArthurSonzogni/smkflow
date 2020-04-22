@@ -4,18 +4,17 @@
 
 ![logo][logo]
 
-smkflow
-=======
+SMKFLOW is a node editor in C++ compatible with WebAssembly using [SMK][smk]
 
-A dataflow node editor in C++ compatible with WebAssembly using [SMK][smk]
+**status**: experimental. Expect regular change in the API for the next few months.
+If you need new features, please ask on Github.
 
-Features:
---------
+**Features**:
 - Compatible with WebAssembly.
 - Use CMake FetchContent. You don't have to download anything. Just use the
   CMake snippet below:
 
-Examples:
+Examples/Demo:
 ---------
 
 Use the [./examples/](./examples/) directory. This produce the following
@@ -25,26 +24,20 @@ API
 ---
 The API consists of 4 files:
 
-- [Model.hpp](./include/smkflow/Model.hpp) Defines your own nodes. This is the
-main file you need to look at for starting. Please try the
-[./examples/minimal.cpp](./examples/minimal.cpp) file.
+- [Model.hpp](./include/smkflow/Model.hpp) Let you define how your nodes will look like. Please try example:
+[./examples/minimal.cpp](./examples/minimal.cpp).
 
-- [Elements.hpp](./include/smkflow/Elements.hpp) Contains the public definition of the
-elements composing the view. Use it to query the current state or to apply
-modifications. See [./examples/algebra.cpp](./examples/algebra.cpp) file.
+- [Elements.hpp](./include/smkflow/Elements.hpp) Contains the public definition elements composing the view at runtime. You can use them to query/update the view. See [./examples/algebra.cpp](./examples/algebra.cpp) file.
 
 - [Constants.hpp](./include/smkflow/Constants.hpp) Contains the default sizes and
 colors the library is using for staying consistant. Feel free to fork and modify
 this file to make smkflow suits your needs.
 
-- [Widget/](./include/smkflow/widget). Each node can contains arbitrary
-widgets. The base library contains InputBox and Sliders. You can also define
-yours using this file.
-
+- [Widget/](./include/smkflow/widget). Every nodes can display some GUI inside. This directory contains the GUI public interface. You can also easily define your own components if needed.
 
 CMake
 -----
-Include the following CMake:
+Include the following lines in your CMake and you are ready to go.
 ~~~cmake
 include(FetchContent)
 
