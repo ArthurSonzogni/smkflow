@@ -36,12 +36,14 @@ class MenuEntryImpl : public LabelImpl, public ActionContext {
   }
 
   void Draw(smk::RenderTarget* target) override {
+    if (hover_) {
     square_.SetColor(focused_ ? color::widget_background_focus
                               : hover_ ? color::widget_background_hover
                                        : color::widget_background);
     square_.SetPosition(Position());
     square_.SetScale(dimensions());
     target->Draw(square_);
+    }
 
     LabelImpl::Draw(target);
   }

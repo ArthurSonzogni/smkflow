@@ -8,6 +8,7 @@
 #include <smkflow/NodeImpl.hpp>
 #include <smkflow/SlotImpl.hpp>
 #include <smkflow/widget/Box.hpp>
+#include <smkflow/widget/MenuImpl.hpp>
 
 namespace smkflow {
 
@@ -291,10 +292,8 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
   if (cursor_captured_for_menu_) {
     auto pos = menu_widget_->Position();
     auto dim = menu_widget_->dimensions();
-    square_.SetPosition(pos - size::widget_margin * glm::vec2(1.f));
-    square_.SetScale(dim + size::widget_margin * glm::vec2(2.f));
-    square_.SetColor(glm::vec4(0.f, 0.f, 0.f, 1.f));
-    target->Draw(square_);
+    DrawBoxBackground(target, pos - size::widget_margin * glm::vec2(1.f),
+    dim + size::widget_margin * glm::vec2(2.f));
 
     menu_widget_->Draw(target);
   }

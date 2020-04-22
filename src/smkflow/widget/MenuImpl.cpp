@@ -1,15 +1,15 @@
 // Copyright 2020 Arthur Sonzogni. All rights reserved.
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
-#include <smk/RenderTarget.hpp>
-#include <smk/Text.hpp>
-#include <smkflow/Constants.hpp>
-#include <smkflow/widget/Menu.hpp>
-#include <smkflow/widget/BoxImpl.hpp>
-#include <smkflow/Constants.hpp>
 #include <smk/Input.hpp>
+#include <smk/RenderTarget.hpp>
 #include <smk/Shape.hpp>
+#include <smk/Text.hpp>
 #include <smk/VertexArray.hpp>
+#include <smkflow/Constants.hpp>
+#include <smkflow/widget/BoxImpl.hpp>
+#include <smkflow/widget/Menu.hpp>
+#include <smkflow/widget/MenuImpl.hpp>
 
 namespace smkflow {
 
@@ -92,23 +92,21 @@ class MenuImpl : public Widget, public Widget::Delegate {
   }
 
   void Draw(smk::RenderTarget* target) override {
-    square_.SetPosition(Widget::Position());
-    square_.SetScale(dimensions());
-    square_.SetColor(cursor_capture_ ? color::widget_background_focus
-                                     : hover_ ? color::widget_background_hover
-                                              : color::widget_background);
-    target->Draw(square_);
+    if (hover_) {
+      square_.SetPosition(Widget::Position());
+      square_.SetScale(dimensions());
+      square_.SetColor(cursor_capture_ ? color::widget_background_focus
+                                       : color::widget_background_hover);
+      target->Draw(square_);
+    }
 
     text_.SetPosition(Widget::Position());
     target->Draw(text_);
 
     if (cursor_capture_) {
-      square_.SetPosition(children_->Position() -
-                          size::widget_margin * glm::vec2(1.f));
-      square_.SetScale(children_->dimensions() + 2.f * size::widget_margin * glm::vec2(1.f));
-      square_.SetColor(color::widget_background);
-      //square_.SetColor({0.f, 0.f, 0.f, 1.f});
-      target->Draw(square_);
+      DrawBoxBackground(
+          target, children_->Position() - size::widget_margin * glm::vec2(1.f),
+          children_->dimensions() + 2.f * size::widget_margin * glm::vec2(1.f));
       children_->Draw(target);
     }
 
@@ -156,6 +154,27 @@ WidgetFactory Menu(const std::string& label, std::vector<WidgetFactory> children
   return [=](Widget::Delegate* delegate) {
     return std::make_unique<MenuImpl>(delegate, label, children);
   };
+}
+
+void DrawBoxBackground(smk::RenderTarget* target,
+                       glm::vec2 position,
+                       glm::vec2 dimension) {
+  auto square = smk::Shape::Square();
+  square.SetColor({0.f, 0.f, 0.f, 1.f});
+  square.SetPosition(position);
+  square.SetScale(dimension);
+  target->Draw(square);
+  auto border = smk::Shape::Path(
+      {
+          position,
+          position + glm::vec2(dimension.x, 0.f),
+          position + dimension,
+          position + glm::vec2(0.f, dimension.y),
+          position,
+      },
+      1);
+  border.SetColor({1.f, 1.f, 1.f, 1.f});
+  target->Draw(border);
 }
 
 }  // namespace smkflow
