@@ -53,6 +53,7 @@
           "minimal.js",
           "widget_gallery.js",
           "algebra.js",
+          "perftest.js",
         ];
 
         // Populate the example list.
@@ -81,6 +82,7 @@
               window.addEventListener("DOMContentLoaded", async function() {
                 // Build a canvas to display the example
                 let canvas = document.createElement("canvas");
+                canvas.oncontextmenu = (e) => e.preventDefault();
                 document.body.appendChild(canvas);
 
                 // Load the example script.

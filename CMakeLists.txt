@@ -48,13 +48,19 @@ target_include_directories(smkflow
     src/
 )
 
-target_compile_options(smkflow
- PRIVATE
-  -Wall
-  -Werror
-  -pedantic-errors
-  -Wextra
-)
+# Add as many warning as possible:
+if (MSVC)
+  target_compile_options(smkflow PRIVATE "/wd4244")
+  target_compile_options(smkflow PRIVATE "/wd4267")
+  target_compile_options(smkflow PRIVATE "/wd4996")
+  target_compile_options(smkflow PRIVATE "/wd4305")
+else()
+  target_compile_options(smkflow PRIVATE "-Wall")
+  target_compile_options(smkflow PRIVATE "-Werror")
+  target_compile_options(smkflow PRIVATE "-pedantic-errors")
+  target_compile_options(smkflow PRIVATE "-Wextra")
+  target_compile_options(smkflow PRIVATE "-Wno-sign-compare")
+endif()
 
 target_link_libraries(smkflow PUBLIC smk::smk)
 target_link_libraries(smkflow PRIVATE fmt::fmt)

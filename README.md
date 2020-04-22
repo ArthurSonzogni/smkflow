@@ -57,8 +57,7 @@ include(FetchContent)
 
 FetchContent_Declare(smkflow
   GIT_REPOSITORY https://github.com/ArthurSonzogni/smkflow
-  GIT_REPOSITORY git@github.com:ArthurSonzogni/smkflow
-  # GIT_TAG to-be-choosen, either a commit or master
+  GIT_TAG master # Please choose a fixed commit hash here.
 )
 
 FetchContent_GetProperties(smkflow)

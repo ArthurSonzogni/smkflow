@@ -92,7 +92,7 @@ class MenuImpl : public Widget, public Widget::Delegate {
   }
 
   void Draw(smk::RenderTarget* target) override {
-    if (hover_) {
+    if (cursor_capture_ || hover_) {
       square_.SetPosition(Widget::Position());
       square_.SetScale(dimensions());
       square_.SetColor(cursor_capture_ ? color::widget_background_focus
