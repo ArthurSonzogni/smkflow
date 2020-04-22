@@ -23,8 +23,9 @@ SMKFLOW is a node editor in C++ compatible with WebAssembly using [SMK][smk]
 
 **Features**:
 - Compatible with WebAssembly.
-- Use CMake FetchContent. You don't have to download anything. Just use the
-  CMake snippet below:
+- The permissive MIT license.
+- Use CMake FetchContent. No download is needed. You use the cmake snippet below
+  to depends on smkflow.
   
 **Warning**. This is an active project. Please do not expect the API to be stable for the next few months.
 
