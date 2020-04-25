@@ -10,9 +10,9 @@
 #include <smkflow/widget/Box.hpp>
 #include <smkflow/widget/Input.hpp>
 #include <smkflow/widget/Label.hpp>
+#include <smkflow/widget/Menu.hpp>
 #include <smkflow/widget/Slider.hpp>
 #include <smkflow/widget/Widget.hpp>
-#include <smkflow/widget/Menu.hpp>
 
 #include "asset.hpp"
 
@@ -92,33 +92,39 @@ auto node_menu = model::Node{
     color_node,
     {},
     {},
-    Menu("menu", {
-        Menu("File", {
-            MenuEntry("1.html", ActionNone()),
-            MenuEntry("2.html", ActionNone()),
-            MenuEntry("3.html", ActionNone()),
-            MenuEntry("4.html", ActionNone()),
-            MenuEntry("5.html", ActionNone()),
-            MenuEntry("6.html", ActionNone()),
-            MenuEntry("7.html", ActionNone()),
-            MenuEntry("8.html", ActionNone()),
-            MenuEntry("9.html", ActionNone()),
-        }),
-        Menu("Edition", {
-            Slider(),
-            Slider(0, 1, 0.5, "{:.2f}"),
-        }),
-        Menu("Display", {
-            Menu("Sliders", {
-              Slider(0, 1, 0.5, "{:.2f}"),
-              Slider(0, 1, 0.5, "{:.2f}"),
-            }),
-            Menu("Input", {
-              Input("input 1"),
-              Input("input 2"),
-            }),
-        }),
-    }),
+    Menu("menu",
+         {
+             Menu("File",
+                  {
+                      MenuEntry("1.html", ActionNone()),
+                      MenuEntry("2.html", ActionNone()),
+                      MenuEntry("3.html", ActionNone()),
+                      MenuEntry("4.html", ActionNone()),
+                      MenuEntry("5.html", ActionNone()),
+                      MenuEntry("6.html", ActionNone()),
+                      MenuEntry("7.html", ActionNone()),
+                      MenuEntry("8.html", ActionNone()),
+                      MenuEntry("9.html", ActionNone()),
+                  }),
+             Menu("Edition",
+                  {
+                      Slider(),
+                      Slider(0, 1, 0.5, "{:.2f}"),
+                  }),
+             Menu("Display",
+                  {
+                      Menu("Sliders",
+                           {
+                               Slider(0, 1, 0.5, "{:.2f}"),
+                               Slider(0, 1, 0.5, "{:.2f}"),
+                           }),
+                      Menu("Input",
+                           {
+                               Input("input 1"),
+                               Input("input 2"),
+                           }),
+                  }),
+         }),
 };
 
 auto my_board = model::Board{

@@ -11,8 +11,8 @@
 #include <smkflow/Model.hpp>
 #include <smkflow/widget/Box.hpp>
 #include <smkflow/widget/Input.hpp>
-#include <smkflow/widget/Slider.hpp>
 #include <smkflow/widget/Menu.hpp>
+#include <smkflow/widget/Slider.hpp>
 
 #include "asset.hpp"
 
@@ -28,73 +28,65 @@ auto type_number = glm::vec4(1.f, 0.5f, 0.5f, 1.f);
 auto node_color = glm::vec4(0.5f, 0.5f, 0.5f, 1.f);
 auto node_color_number = glm::vec4(0.5, 0.25f, 0.25f, 1.f);
 
-auto node_add = smkflow::model::Node{
-    Node::Add,
-    "Add",
-    node_color,
-    {
-        {"", type_number},
-        {"", type_number},
-    },
-    {
-        {"out", type_number},
-    },
-    smkflow::VBox({
-      smkflow::Input("0.0"),
-      smkflow::Input("0.0"),
-    })
-};
+auto node_add = smkflow::model::Node{Node::Add,
+                                     "Add",
+                                     node_color,
+                                     {
+                                         {"", type_number},
+                                         {"", type_number},
+                                     },
+                                     {
+                                         {"out", type_number},
+                                     },
+                                     smkflow::VBox({
+                                         smkflow::Input("0.0"),
+                                         smkflow::Input("0.0"),
+                                     })};
 
-auto node_substract = smkflow::model::Node{
-    Node::Substract,
-    "Substract",
-    node_color,
-    {
-        {"", type_number},
-        {"", type_number},
-    },
-    {
-        {"out", type_number},
-    },
-    smkflow::VBox({
-      smkflow::Input("0.0"),
-      smkflow::Input("0.0"),
-    })
-};
+auto node_substract = smkflow::model::Node{Node::Substract,
+                                           "Substract",
+                                           node_color,
+                                           {
+                                               {"", type_number},
+                                               {"", type_number},
+                                           },
+                                           {
+                                               {"out", type_number},
+                                           },
+                                           smkflow::VBox({
+                                               smkflow::Input("0.0"),
+                                               smkflow::Input("0.0"),
+                                           })};
 
-auto node_multiply = smkflow::model::Node{
-    Node::Multiply,
-    "Multiply",
-    node_color,
-    {
-        {"", type_number},
-        {"", type_number},
-    },
-    {
-        {"out", type_number},
-    },
-    smkflow::VBox({
-      smkflow::Input("0.0"),
-      smkflow::Input("0.0"),
-    })
-};
+auto node_multiply = smkflow::model::Node{Node::Multiply,
+                                          "Multiply",
+                                          node_color,
+                                          {
+                                              {"", type_number},
+                                              {"", type_number},
+                                          },
+                                          {
+                                              {"out", type_number},
+                                          },
+                                          smkflow::VBox({
+                                              smkflow::Input("0.0"),
+                                              smkflow::Input("0.0"),
+                                          })};
 
-auto node_divide = smkflow::model::Node{
-    Node::Divide,
-    "Divide",
-    node_color,
-    {
-        {"", type_number},
-        {"", type_number},
-    },
-    {
-        {"", type_number},
-    },
-    smkflow::VBox({
-      smkflow::Input("0.0"),
-      smkflow::Input("0.0"),
-    })
-};
+auto node_divide = smkflow::model::Node{Node::Divide,
+                                        "Divide",
+                                        node_color,
+                                        {
+                                            {"", type_number},
+                                            {"", type_number},
+                                        },
+                                        {
+                                            {"", type_number},
+                                        },
+                                        smkflow::VBox({
+                                            smkflow::Input("0.0"),
+                                            smkflow::Input("0.0"),
+                                        })};
 
 auto node_number = smkflow::model::Node{
     Node::Number,
@@ -109,11 +101,11 @@ auto node_number = smkflow::model::Node{
 
 auto my_board = smkflow::model::Board{
     {
-      smkflow::MenuEntry("Number", smkflow::CreateNode(node_number)),
-      smkflow::MenuEntry("Add", smkflow::CreateNode(node_add)),
-      smkflow::MenuEntry("Substract", smkflow::CreateNode(node_substract)),
-      smkflow::MenuEntry("Multiply", smkflow::CreateNode(node_multiply)),
-      smkflow::MenuEntry("Divide", smkflow::CreateNode(node_divide)),
+        smkflow::MenuEntry("Number", smkflow::CreateNode(node_number)),
+        smkflow::MenuEntry("Add", smkflow::CreateNode(node_add)),
+        smkflow::MenuEntry("Substract", smkflow::CreateNode(node_substract)),
+        smkflow::MenuEntry("Multiply", smkflow::CreateNode(node_multiply)),
+        smkflow::MenuEntry("Divide", smkflow::CreateNode(node_divide)),
     },
     asset::arial_ttf,
 };

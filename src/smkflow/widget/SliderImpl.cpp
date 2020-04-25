@@ -10,8 +10,8 @@
 #include <smk/Text.hpp>
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/Constants.hpp>
-#include <smkflow/widget/Widget.hpp>
 #include <smkflow/widget/Slider.hpp>
+#include <smkflow/widget/Widget.hpp>
 
 namespace smkflow {
 

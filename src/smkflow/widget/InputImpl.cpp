@@ -1,16 +1,15 @@
 // Copyright 2020 Arthur Sonzogni. All rights reserved.
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
+#include <algorithm>
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
-#include <algorithm>
 #include <smk/Shape.hpp>
 #include <smk/Text.hpp>
 #include <smkflow/BoardImpl.hpp>
 #include <smkflow/Constants.hpp>
 #include <smkflow/widget/Input.hpp>
 #include <smkflow/widget/Widget.hpp>
-#include <algorithm>
 
 namespace smkflow {
 

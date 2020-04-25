@@ -2,8 +2,8 @@
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
 
-#include <smkflow/Constants.hpp>
 #include <algorithm>
+#include <smkflow/Constants.hpp>
 #include <smkflow/widget/BoxImpl.hpp>
 
 namespace smkflow {

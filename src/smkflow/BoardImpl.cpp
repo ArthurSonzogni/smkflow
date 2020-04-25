@@ -14,29 +14,28 @@
 namespace smkflow {
 
 class BoardImpl::MenuDelegate : public Widget::Delegate {
-  public:
-   MenuDelegate(BoardImpl* board) : board_(board) {}
-   glm::vec2 Position() override { return {0.f, 0.f}; }
-   void InvalidateLayout() override { invalidated_ = true; }
-   smk::Font& Font() override { return board_->font();}
-   CursorCapture CaptureCursor() override {
-     cursor_capturable_.Invalidate();
-     return cursor_capturable_.Capture();
-   }
-   bool IsInsideMenu() override { return true; }
-   bool Validate() {
-     bool ret = invalidated_;
-     invalidated_ = false;
-     return ret;
-   }
-   BoardImpl* board() override { return board_; }
+ public:
+  MenuDelegate(BoardImpl* board) : board_(board) {}
+  glm::vec2 Position() override { return {0.f, 0.f}; }
+  void InvalidateLayout() override { invalidated_ = true; }
+  smk::Font& Font() override { return board_->font(); }
+  CursorCapture CaptureCursor() override {
+    cursor_capturable_.Invalidate();
+    return cursor_capturable_.Capture();
+  }
+  bool IsInsideMenu() override { return true; }
+  bool Validate() {
+    bool ret = invalidated_;
+    invalidated_ = false;
+    return ret;
+  }
+  BoardImpl* board() override { return board_; }
 
-  private:
-   bool invalidated_ = true;
-   BoardImpl* board_;
-   CursorCapturable cursor_capturable_;
+ private:
+  bool invalidated_ = true;
+  BoardImpl* board_;
+  CursorCapturable cursor_capturable_;
 };
-
 
 // static
 std::unique_ptr<Board> Board::Create(const model::Board& model) {

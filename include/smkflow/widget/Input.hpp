@@ -13,7 +13,7 @@ WidgetFactory Input(const std::string& placeholder,
                     const std::string& input = "");
 
 // Interface:
-class InputInterface{
+class InputInterface {
  public:
   virtual void SetValue(const std::string& value) = 0;
   virtual const std::string& GetValue() = 0;

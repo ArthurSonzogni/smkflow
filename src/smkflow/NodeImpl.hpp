@@ -53,7 +53,7 @@ class NodeImpl : public Node, public Widget::Delegate {
   Widget* widget() override;
 
   // WidgetDelegate:
-  glm::vec2 Position() override { return position_;}
+  glm::vec2 Position() override { return position_; }
   void InvalidateLayout() override;
   smk::Font& Font() override;
   CursorCapture CaptureCursor() override;

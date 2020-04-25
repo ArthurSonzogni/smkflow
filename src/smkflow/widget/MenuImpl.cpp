@@ -1,8 +1,8 @@
 // Copyright 2020 Arthur Sonzogni. All rights reserved.
 // Use of this source code is governed by the MIT license that can be found in
 // the LICENSE file.
-#include <smk/Input.hpp>
 #include <algorithm>
+#include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
 #include <smk/Shape.hpp>
 #include <smk/Text.hpp>
@@ -19,7 +19,7 @@ class MenuImpl : public Widget, public Widget::Delegate {
   MenuImpl(Widget::Delegate* delegate,
            const std::string& text,
            std::vector<WidgetFactory> children)
-      : Widget(delegate){
+      : Widget(delegate) {
     text_ = smk::Text(delegate->Font(), text);
     computed_dimensions_ = text_.ComputeDimensions();
     computed_dimensions_.x += computed_dimensions_.y;
@@ -36,11 +36,11 @@ class MenuImpl : public Widget, public Widget::Delegate {
   glm::vec2 ComputeDimensions() override {
     child_dimension_ = children_->ComputeDimensions();
     children_->ComputeDimensions();
-    //if (cursor_capture_) {
-      //return glm::vec2(computed_dimensions_.x + size::widget_margin + .x,
-                       //std::max(computed_dimensions_.y, child.y));
+    // if (cursor_capture_) {
+    // return glm::vec2(computed_dimensions_.x + size::widget_margin + .x,
+    // std::max(computed_dimensions_.y, child.y));
     //}
-    //else
+    // else
     return computed_dimensions_;
   }
 
@@ -63,9 +63,9 @@ class MenuImpl : public Widget, public Widget::Delegate {
              cursor.x < position.x + dimension.x &&  //
              cursor.y > position.y &&                //
              cursor.y < position.y + dimension.y;    //
-    //if (cursor_capture_ && hover_ && input->IsCursorPressed()) {
-      ////cursor_capture_ = false;
-      //InvalidateLayout();
+    // if (cursor_capture_ && hover_ && input->IsCursorPressed()) {
+    ////cursor_capture_ = false;
+    // InvalidateLayout();
     //}
 
     if (hover_) {
@@ -118,15 +118,9 @@ class MenuImpl : public Widget, public Widget::Delegate {
     target->Draw(triangle_);
   }
 
-  glm::vec2 Position() override {
-    return delegate()->Position();
-  }
-  void InvalidateLayout() override {
-    return delegate()->InvalidateLayout();
-  }
-  smk::Font& Font() override {
-    return delegate()->Font();
-  }
+  glm::vec2 Position() override { return delegate()->Position(); }
+  void InvalidateLayout() override { return delegate()->InvalidateLayout(); }
+  smk::Font& Font() override { return delegate()->Font(); }
   CursorCapture CaptureCursor() override {
     if (!cursor_capture_) {
       cursor_capture_ = delegate()->CaptureCursor();
@@ -151,7 +145,8 @@ class MenuImpl : public Widget, public Widget::Delegate {
   CursorCapturable cursor_capturable_;
 };
 
-WidgetFactory Menu(const std::string& label, std::vector<WidgetFactory> children) {
+WidgetFactory Menu(const std::string& label,
+                   std::vector<WidgetFactory> children) {
   return [=](Widget::Delegate* delegate) {
     return std::make_unique<MenuImpl>(delegate, label, children);
   };

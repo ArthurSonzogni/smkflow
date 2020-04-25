@@ -4,8 +4,8 @@
 #ifndef SMKFLOW_WIDGET_BOXIMPL_HPP
 #define SMKFLOW_WIDGET_BOXIMPL_HPP
 
-#include <smkflow/widget/Box.hpp>
 #include <memory>
+#include <smkflow/widget/Box.hpp>
 #include <vector>
 
 namespace smkflow {

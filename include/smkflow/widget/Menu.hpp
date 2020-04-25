@@ -4,8 +4,8 @@
 #ifndef SMKFLOW_WIDGET_MENU_HPP
 #define SMKFLOW_WIDGET_MENU_HPP
 
-#include <smkflow/widget/Widget.hpp>
 #include <smkflow/widget/Action.hpp>
+#include <smkflow/widget/Widget.hpp>
 
 namespace smkflow {
 
@@ -29,4 +29,4 @@ WidgetFactory Menu(const std::string& label,
 
 }  // namespace smkflow
 
-#endif // end of include guard: SMKFLOW_WIDGET_MENU_HPP
+#endif  // end of include guard: SMKFLOW_WIDGET_MENU_HPP
