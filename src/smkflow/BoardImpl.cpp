@@ -339,6 +339,9 @@ JSON BoardImpl::Serialize() {
 
 #define CHECK(what) if (!(what)) return false;
 bool BoardImpl::Deserialize(JSON& json) {
+  nodes_.clear();
+  connectors_.clear();
+
   std::map<int, int> index;
   for (int i = 0; i < (int)model_.nodes.size(); ++i)
     index[model_.nodes[i].identifier] = i;
