@@ -129,6 +129,12 @@ auto node_menu = model::Node{
 
 auto my_board = model::Board{
     {
+        node_sliders,
+        node_box,
+        node_input,
+        node_label,
+    },
+    {
         MenuEntry("Sliders", CreateNode(node_sliders)),
         MenuEntry("Box", CreateNode(node_box)),
         MenuEntry("Input", CreateNode(node_input)),

@@ -136,6 +136,17 @@ class InputImpl : public Widget, public InputInterface {
 
   const std::string& GetValue() override { return input_; }
 
+  JSON Serialize() override {
+    JSON json;
+    json["input"] = input_;
+    return json;
+  }
+
+  bool Deserialize(JSON& json) override {
+    SetValue(json["input"]);
+    return true;
+  }
+
  private:
   glm::vec2 computed_dimensions_;
   int backspace_repeat = 0;

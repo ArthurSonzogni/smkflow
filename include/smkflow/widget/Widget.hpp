@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 #include <smkflow/CursorCapture.hpp>
+#include <smkflow/JSON.hpp>
 
 namespace smk {
 class RenderTarget;
@@ -48,6 +49,10 @@ class Widget {
 
   // Render:
   virtual void Draw(smk::RenderTarget*) {}
+
+  // Serialization:
+  virtual JSON Serialize() { return JSON(); }
+  virtual bool Deserialize(JSON&) { return true; }
 
  protected:
   Delegate* delegate() { return delegate_; }

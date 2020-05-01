@@ -31,6 +31,9 @@ class BoardImpl : public Board {
   int NodeCount() override { return nodes_.size(); }
   NodeImpl* NodeAt(int i) override { return nodes_.at(i).get(); }
   CursorCapture CaptureCursor() override;
+  void Connect(Slot* A, Slot* B) override;
+  JSON Serialize() override;
+  bool Deserialize(JSON&) override;
 
  private:
   void PushNodeAppart();
@@ -81,6 +84,8 @@ class BoardImpl : public Board {
   class MenuDelegate;
   std::unique_ptr<MenuDelegate> menu_delegate_;
   friend class MenuDelegate;
+
+  model::Board model_;
 };
 
 }  // namespace smkflow

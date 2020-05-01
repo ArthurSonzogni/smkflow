@@ -15,8 +15,10 @@ class BoxImpl : public Widget, public BoxInterface {
   BoxImpl(Delegate* delegate, std::vector<WidgetFactory> children);
   bool Step(smk::Input* input, const glm::vec2& cursor) override;
   void Draw(smk::RenderTarget* target) override;
-  virtual Widget* ChildAt(int i) override;
-  virtual int ChildCount() override;
+  Widget* ChildAt(int i) override;
+  int ChildCount() override;
+  JSON Serialize() override;
+  bool Deserialize(JSON&) override;
 
  protected:
   std::vector<std::unique_ptr<Widget>> children_;

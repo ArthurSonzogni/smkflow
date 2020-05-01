@@ -8,6 +8,7 @@
 #include <smk/Input.hpp>
 #include <smk/RenderTarget.hpp>
 #include <smkflow/Model.hpp>
+#include <smkflow/JSON.hpp>
 
 namespace smkflow {
 
@@ -22,20 +23,26 @@ class Board {
   static std::unique_ptr<Board> Create(const model::Board&);
   virtual ~Board() = default;
 
-  virtual Node* Create(const model::Node&) = 0;
-  // virtual void Insert(std::unique_ptr<Node>) = 0;
-
   // Called 60/s for animations:
   virtual void Step(smk::RenderTarget* target, smk::Input* input) = 0;
 
-  // Called for each new images:
+  // Called for producing a new image:
   virtual void Draw(smk::RenderTarget* target) = 0;
+
+  // Modifier;
+  virtual Node* Create(const model::Node&) = 0;
+  virtual void Connect(Slot* A, Slot* B) = 0;
 
   // Observers:
   virtual int NodeCount() = 0;
   virtual Node* NodeAt(int i) = 0;
 
+  // Used by widget to keep the cursor for it.
   virtual CursorCapture CaptureCursor() = 0;
+
+  // Serialization:
+  virtual JSON Serialize() = 0;
+  virtual bool Deserialize(JSON& in) = 0;
 };
 
 class Slot {

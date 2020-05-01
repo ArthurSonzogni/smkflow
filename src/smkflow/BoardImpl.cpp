@@ -44,8 +44,8 @@ std::unique_ptr<Board> Board::Create(const model::Board& model) {
 
 BoardImpl::~BoardImpl() = default;
 
-BoardImpl::BoardImpl(const model::Board& model) {
-  font_ = smk::Font(model.font, 30);
+BoardImpl::BoardImpl(const model::Board& model) : model_(model) {
+  font_ = smk::Font(model_.font, 30);
   menu_delegate_ = std::make_unique<MenuDelegate>(this);
   menu_widget_ = VBox(model.context_widgets_)(menu_delegate_.get());
   square_ = smk::Shape::Square();
@@ -125,7 +125,7 @@ void BoardImpl::PushNodeAppart() {
       if (dist > 0.f)
         continue;
 
-      // clang-format on
+      // clang-format off
       glm::vec2 dir;
       if (b1.x - a2.x == dist)
         dir = glm::vec2(dist, 0.f);
@@ -135,7 +135,7 @@ void BoardImpl::PushNodeAppart() {
         dir = glm::vec2(0.f, dist);
       if (a1.y - b2.y == dist)
         dir = glm::vec2(0.f, -dist);
-      // clang-format off
+      // clang-format on
 
       glm::vec2 ca = node_a->position() + node_a->dimension() * 0.5f;
       glm::vec2 cb = node_b->position() + node_b->dimension() * 0.5f;
@@ -209,28 +209,8 @@ void BoardImpl::ReleaseConnector() {
   if (end_slot->GetColor() != start_slot_->GetColor())
     return;
 
-  auto connector = std::make_unique<ConnectorImpl>(start_slot_, end_slot);
-  connectors_.push_back(std::move(connector));
+  Connect(start_slot_, end_slot);
 }
-
-// void BoardImpl::OnCursorPressed(smk::Input* input_, glm::vec2 cursor_) {
-
-//// Move node.
-// for (auto& node : nodes_) {
-// if (node->OnCursorPressed(cursor_)) {
-// selected_node_ = node.get();
-//// Reorder to make selected_node_ to be displayed in front.
-// int i = 0;
-// while (nodes_[i].get() != selected_node_)
-//++i;
-// while (++i != (int)nodes_.size())
-// std::swap(nodes_[i - 1], nodes_[i]);
-// return;
-//}
-//}
-
-//// Translation.
-//}
 
 void BoardImpl::AcquireView() {
   if (!input_->IsCursorPressed())
@@ -288,12 +268,11 @@ void BoardImpl::Draw(smk::RenderTarget* target) {
     target->Draw(foreground_);
   }
 
-
   if (cursor_captured_for_menu_) {
     auto pos = menu_widget_->Position();
     auto dim = menu_widget_->dimensions();
     DrawBoxBackground(target, pos - size::widget_margin * glm::vec2(1.f),
-    dim + size::widget_margin * glm::vec2(2.f));
+                      dim + size::widget_margin * glm::vec2(2.f));
 
     menu_widget_->Draw(target);
   }
@@ -315,7 +294,7 @@ CursorCapture BoardImpl::CaptureCursor() {
 void BoardImpl::Menu() {
   if (!cursor_captured_for_menu_) {
     if (input_->IsMousePressed(GLFW_MOUSE_BUTTON_2))
-        cursor_captured_for_menu_ = CaptureCursor();
+      cursor_captured_for_menu_ = CaptureCursor();
     if (!cursor_captured_for_menu_)
       return;
     menu_widget_->SetDimensions(menu_widget_->ComputeDimensions());
@@ -328,6 +307,68 @@ void BoardImpl::Menu() {
   bool clicked = menu_widget_->Step(input_, cursor_);
   if (input_->IsCursorPressed() && !clicked)
     cursor_captured_for_menu_.Invalidate();
+}
+
+JSON BoardImpl::Serialize() {
+  auto non_connected =
+      std::remove_if(connectors_.begin(), connectors_.end(),
+                     [](const auto& x) { return !x->IsConnected(); });
+  connectors_.erase(non_connected, connectors_.end());
+
+  int slot_last = 0;
+  std::map<SlotImpl*, int> slot_index;
+  slot_index[nullptr] = -1;
+  JSON json;
+
+  json["nodes"] = JSON::array();
+  for (auto& node : nodes_) {
+    json["nodes"].push_back(node->Serialize());
+    for (auto& it : node->inputs())
+      slot_index[it.get()] = slot_last++;
+    for (auto& it : node->outputs())
+      slot_index[it.get()] = slot_last++;
+  }
+
+  json["connectors"] = JSON::array();
+  for (auto& connector : connectors_) {
+    json["connectors"].push_back(slot_index[connector->input()]);
+    json["connectors"].push_back(slot_index[connector->output()]);
+  }
+  return json;
+}
+
+#define CHECK(what) if (!(what)) return false;
+bool BoardImpl::Deserialize(JSON& json) {
+  std::map<int, int> index;
+  for (int i = 0; i < (int)model_.nodes.size(); ++i)
+    index[model_.nodes[i].identifier] = i;
+
+  int slot_last = 0;
+  std::map<int, SlotImpl*> slot_ptr;
+
+  for (auto& node_json : json["nodes"]) {
+    auto& model_index = index[node_json["identifier"]];
+    auto* node = Create(model_.nodes[model_index]);
+    node->Deserialize(node_json);
+    for (auto& it : node->inputs())
+      slot_ptr[slot_last++] = it.get();
+    for (auto& it : node->outputs())
+      slot_ptr[slot_last++] = it.get();
+  }
+
+  auto it = json["connectors"].begin();
+  while (it != json["connectors"].end()) {
+    int A = *it; ++it;
+    if (it == json["connectors"].end()) return false;
+    int B = *it; ++it;
+    Connect(slot_ptr[A], slot_ptr[B]);
+  }
+  return true;
+}
+
+void BoardImpl::Connect(Slot* A, Slot* B) {
+  connectors_.push_back(std::make_unique<ConnectorImpl>(
+      static_cast<SlotImpl*>(A), static_cast<SlotImpl*>(B)));
 }
 
 }  // namespace smkflow

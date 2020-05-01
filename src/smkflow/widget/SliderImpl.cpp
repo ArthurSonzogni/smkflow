@@ -100,6 +100,15 @@ class SliderImpl : public Widget, public SliderInterface {
 
   void SetValue(float value) override { value_ = value; }
   float GetValue() override { return value_; }
+  JSON Serialize() override {
+    JSON json;
+    json["value"] = value_;
+    return json;
+  }
+  bool Deserialize(JSON& json) override {
+    value_ = json["value"];
+    return true;
+  }
 
  private:
   float min_;

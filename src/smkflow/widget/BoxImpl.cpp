@@ -36,6 +36,21 @@ int BoxImpl::ChildCount() {
   return children_.size();
 }
 
+JSON BoxImpl::Serialize() {
+  JSON json = JSON::array();
+  for (auto& child : children_)
+    json.push_back(child->Serialize());
+  return json;
+}
+
+bool BoxImpl::Deserialize(JSON& json) {
+  int i = 0;
+  bool ret = true;
+  for (auto& child : children_)
+    ret &= child->Deserialize(json[i++]);
+  return ret;
+}
+
 BoxImplVertical::BoxImplVertical(Delegate* delegate,
                                  std::vector<WidgetFactory> children)
     : BoxImpl(delegate, children) {}

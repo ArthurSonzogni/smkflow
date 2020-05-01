@@ -1,11 +1,13 @@
 cmake_minimum_required (VERSION 3.11)
-
 add_subdirectory(third_party)
 
 project(smkflow
   LANGUAGES CXX
   VERSION 1.0.0
 )
+
+option(SMKFLOW_BUILD_EXAMPLES "Set to ON to build examples" ON)
+option(SMKFLOW_BUILD_TESTS "Set to ON to build tests" OFF)
 
 add_library(smkflow STATIC
   include/smkflow/Constants.hpp
@@ -64,6 +66,48 @@ endif()
 
 target_link_libraries(smkflow PUBLIC smk::smk)
 target_link_libraries(smkflow PRIVATE fmt::fmt)
+target_link_libraries(smkflow PUBLIC nlohmann_json::nlohmann_json)
+
 set_target_properties(smkflow PROPERTIES CXX_STANDARD 17)
 
-add_subdirectory(examples)
+if(SMKFLOW_BUILD_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+
+if (SMKFLOW_BUILD_TESTS AND ${CMAKE_VERSION} VERSION_GREATER "3.11.4") 
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+  set(FETCHCONTENT_UPDATES_DISCONNECTED TRUE)
+  include(FetchContent)
+
+  FetchContent_Declare( googletest
+    GIT_REPOSITORY "https://github.com/google/googletest"
+    GIT_TAG        release-1.10.0
+  )
+
+  FetchContent_GetProperties(googletest)
+  if(NOT googletest_POPULATED)
+    message(STATUS "Fetching googletest...")
+    FetchContent_Populate(googletest)
+    message(STATUS "... done")
+    add_subdirectory(
+      ${googletest_SOURCE_DIR}
+      ${googletest_BINARY_DIR}
+      EXCLUDE_FROM_ALL)
+  endif()
+
+  add_executable(tests
+    src/smkflow/test.hpp
+    src/smkflow/serialization_test.cpp
+  )
+
+  target_link_libraries(tests
+    PRIVATE smkflow::smkflow 
+    PRIVATE gtest
+    PRIVATE gmock
+    PRIVATE gtest_main
+    PRIVATE asset
+  )
+
+  set_property(TARGET tests PROPERTY CXX_STANDARD 17)
+endif()

@@ -82,6 +82,7 @@ void ConnectorImpl::RebuildVertex() {
 Slot* ConnectorImpl::GetInput() {
   return input_;
 }
+
 Slot* ConnectorImpl::GetOutput() {
   return output_;
 }

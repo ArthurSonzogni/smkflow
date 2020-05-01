@@ -42,7 +42,10 @@ class NodeImpl : public Node, public Widget::Delegate {
   glm::vec2 position() { return position_; }
   glm::vec2 dimension() { return dimension_; }
 
-  // Board:
+  JSON Serialize();
+  bool Deserialize(JSON& in);
+
+  // Node:
   Board* GetBoard() override;
   int Identifier() override { return identifier_; }
   void SetPosition(const glm::vec2& position) override;
@@ -80,6 +83,10 @@ class NodeImpl : public Node, public Widget::Delegate {
 
   glm::vec2 cursor_drag_point;
   CursorCapture cursor_captured_;
+
+ public:
+  const decltype(inputs_)& inputs() { return inputs_; }
+  const decltype(outputs_)& outputs() { return outputs_; }
 };
 
 }  // namespace smkflow

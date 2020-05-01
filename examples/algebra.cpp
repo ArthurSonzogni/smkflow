@@ -100,6 +100,15 @@ auto node_number = smkflow::model::Node{
 };
 
 auto my_board = smkflow::model::Board{
+    // Node list
+    {
+        node_number,
+        node_add,
+        node_substract,
+        node_multiply,
+        node_divide,
+    },
+    // Contextual menu
     {
         smkflow::MenuEntry("Number", smkflow::CreateNode(node_number)),
         smkflow::MenuEntry("Add", smkflow::CreateNode(node_add)),

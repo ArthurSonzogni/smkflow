@@ -28,6 +28,7 @@ struct Node {
 };
 
 struct Board {
+  std::vector<Node> nodes;
   std::vector<WidgetFactory> context_widgets_;
   std::string font;
 };

@@ -240,4 +240,21 @@ Board* NodeImpl::board() {
   return board_;
 }
 
+JSON NodeImpl::Serialize() {
+  JSON json;
+  json["position"] = {position_.x, position_.y};
+  json["identifier"] = identifier_;
+  if (widget_)
+    json["widget"] = widget_->Serialize();
+  return json;
+}
+
+bool NodeImpl::Deserialize(JSON& json) {
+  position_.x = json["position"][0];
+  position_.y = json["position"][1];
+  if (widget_)
+    widget_->Deserialize(json["widget"]);
+  return true;
+}
+
 }  // namespace smkflow
