@@ -142,7 +142,9 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
   title_.SetPosition(position_ + glm::vec2(padding, padding));
 
   target->Draw(base_);
-  target->Draw(title_base_);
+
+  if (!Selected())
+    target->Draw(title_base_);
   target->Draw(title_);
   for (auto& slot : inputs_)
     slot->Draw(target);
@@ -156,9 +158,8 @@ void NodeImpl::Draw(smk::RenderTarget* target) {
 void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
   position_ += speed_;
   speed_ *= 0.2f;
-  if (input->IsCursorReleased()) {
+  if (input->IsCursorReleased())
     cursor_captured_.Invalidate();
-  }
 
   if (layout_invalidated_)
     Layout();
@@ -169,12 +170,19 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
   bool hover = cursor.x > position_.x && cursor.x < position_.x + width_ &&
                cursor.y > position_.y && cursor.y < position_.y + height_;
 
-  if (input->IsCursorPressed() && hover) {
-    cursor_captured_ = board_->CaptureCursor();
+  if (input->IsCursorPressed()) {
+    if (hover) {
+      if (input->IsKeyHold(GLFW_KEY_LEFT_CONTROL))
+        cursor_captured_for_selection_ = board_->CaptureSelection();
+      cursor_captured_ = board_->CaptureCursor();
+    }
     cursor_drag_point = position_ - cursor;
   }
 
-  if (!cursor_captured_)
+  if (!input->IsCursorHold())
+    return;
+
+  if (!(cursor_captured_ || cursor_captured_for_selection_))
     return;
 
   position_ = cursor_drag_point + cursor;
@@ -255,6 +263,10 @@ bool NodeImpl::Deserialize(JSON& json) {
   if (widget_)
     widget_->Deserialize(json["widget"]);
   return true;
+}
+
+bool NodeImpl::Selected() {
+  return bool(cursor_captured_for_selection_);
 }
 
 }  // namespace smkflow

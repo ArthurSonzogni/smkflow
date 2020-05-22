@@ -31,6 +31,7 @@ class BoardImpl : public Board {
   int NodeCount() override { return nodes_.size(); }
   NodeImpl* NodeAt(int i) override { return nodes_.at(i).get(); }
   CursorCapture CaptureCursor() override;
+  CursorCapture CaptureSelection();
   void Connect(Slot* A, Slot* B) override;
   JSON Serialize() override;
   bool Deserialize(JSON&) override;
@@ -74,7 +75,8 @@ class BoardImpl : public Board {
 
   smk::Font font_;
 
-  CursorCapturable cursor_capturable_;
+  CursorCapturable cursor_capturable_ = {1};
+  CursorCapturable cursor_capturable_for_selection_ = {9999};
 
   smk::Input* input_;
   glm::vec2 cursor_;
@@ -86,6 +88,8 @@ class BoardImpl : public Board {
   friend class MenuDelegate;
 
   model::Board model_;
+
+  int selection_id_ = 0;
 };
 
 }  // namespace smkflow

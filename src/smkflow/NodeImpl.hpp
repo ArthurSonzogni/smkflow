@@ -83,6 +83,10 @@ class NodeImpl : public Node, public Widget::Delegate {
 
   glm::vec2 cursor_drag_point;
   CursorCapture cursor_captured_;
+  CursorCapture cursor_captured_for_selection_;
+
+  int selection_id_ = -1;
+  bool Selected();
 
  public:
   const decltype(inputs_)& inputs() { return inputs_; }

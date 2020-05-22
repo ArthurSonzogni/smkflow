@@ -4,6 +4,8 @@
 #ifndef SMKFLOW_CURSOR_CAPTURE_HPP
 #define SMKFLOW_CURSOR_CAPTURE_HPP
 
+#include <set>
+
 namespace smkflow {
 
 class CursorCapture;
@@ -12,7 +14,7 @@ class CursorCapturable;
 class CursorCapture {
  public:
   CursorCapture();
-  CursorCapture(CursorCapturable* b);
+  CursorCapture(CursorCapturable* ref);
   explicit operator bool();
 
   // Move-only
@@ -24,19 +26,24 @@ class CursorCapture {
   void Invalidate();
   virtual ~CursorCapture();
 
+  void Swap(CursorCapture& other);
+
  private:
-  CursorCapturable* b = nullptr;
+  CursorCapturable* ref_ = nullptr;
 };
 
 class CursorCapturable {
  public:
+  CursorCapturable(int capacity = 1);
+  ~CursorCapturable();
   CursorCapture Capture();
   void Invalidate();
   explicit operator bool();
 
  private:
   friend CursorCapture;
-  CursorCapture* cursor_capture_ = nullptr;
+  int capacity_ = 0;
+  std::set<CursorCapture*> set_;
 };
 
 }  // namespace smkflow

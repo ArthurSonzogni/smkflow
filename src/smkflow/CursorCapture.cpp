@@ -7,42 +7,71 @@
 namespace smkflow {
 
 CursorCapture::CursorCapture() = default;
-CursorCapture::CursorCapture(CursorCapturable* b) : b(b) {}
-CursorCapture::operator bool() {
-  return b;
+
+CursorCapture::CursorCapture(CursorCapturable* ref) {
+  if (ref->set_.size() >= ref->capacity_)
+    return;
+
+  ref_ = ref;
+  ref_->set_.insert(this);
 }
-CursorCapture::CursorCapture(CursorCapture&& o) {
-  operator=(std::move(o));
-}
-void CursorCapture::operator=(CursorCapture&& o) {
-  std::swap(b, o.b);
-  if (b) {
-    b->cursor_capture_ = this;
-  }
-  if (o.b) {
-    o.b->cursor_capture_ = &o;
-  }
-}
-void CursorCapture::Invalidate() {
-  if (b) {
-    b->cursor_capture_ = nullptr;
-    b = nullptr;
-  }
-}
+
 CursorCapture::~CursorCapture() {
   Invalidate();
 }
 
-CursorCapture CursorCapturable::Capture() {
-  return cursor_capture_ ? CursorCapture() : CursorCapture(this);
+CursorCapture::operator bool() {
+  return ref_;
 }
+
+CursorCapture::CursorCapture(CursorCapture&& other) {
+  Swap(other);
+}
+
+void CursorCapture::operator=(CursorCapture&& other) {
+  Swap(other);
+}
+
+void CursorCapture::Swap(CursorCapture& other) {
+  if (this == &other)
+    return;
+
+  std::swap(ref_, other.ref_);
+  if (other.ref_) {
+    other.ref_->set_.erase(this);
+    other.ref_->set_.insert(&other);
+  }
+  if (ref_) {
+    ref_->set_.erase(&other);
+    ref_->set_.insert(this);
+  }
+}
+
+void CursorCapture::Invalidate() {
+  if (!ref_)
+    return;
+
+  ref_->set_.erase(this);
+  ref_ = nullptr;
+}
+
+CursorCapturable::CursorCapturable(int capacity) : capacity_(capacity) {}
+
+CursorCapturable::~CursorCapturable() {
+  Invalidate();
+}
+
+CursorCapture CursorCapturable::Capture() {
+  return CursorCapture(this);
+}
+
 void CursorCapturable::Invalidate() {
-  if (cursor_capture_)
-    cursor_capture_->Invalidate();
+  while (set_.size())
+    (**set_.begin()).Invalidate();
 }
 
 CursorCapturable::operator bool() {
-  return cursor_capture_;
+  return set_.size();
 }
 
 }  // namespace smkflow

@@ -77,6 +77,9 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
       (input->cursor() - target->dimension() * 0.5f) * std::exp(view_zoom_) +
       view_shifting_;
 
+  if (input_->IsKeyReleased(GLFW_KEY_LEFT_CONTROL))
+    cursor_capturable_for_selection_.Invalidate();
+
   ReleaseConnector();
   ReleaseView();
   AquireConnector();
@@ -216,10 +219,14 @@ void BoardImpl::AcquireView() {
   if (!input_->IsCursorPressed())
     return;
 
+  if (cursor_capturable_for_selection_)
+    return;
+
   cursor_captured_for_dragging_view_ = CaptureCursor();
   if (!cursor_captured_for_dragging_view_)
     return;
 
+  selection_id_ ++;
   grab_point_ = view_shifting_ + input_->cursor() * std::exp(view_zoom_);
 }
 
@@ -289,6 +296,10 @@ SlotImpl* BoardImpl::FindSlot(const glm::vec2& position) {
 
 CursorCapture BoardImpl::CaptureCursor() {
   return cursor_capturable_.Capture();
+}
+
+CursorCapture BoardImpl::CaptureSelection() {
+  return cursor_capturable_for_selection_.Capture();
 }
 
 void BoardImpl::Menu() {
