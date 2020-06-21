@@ -85,7 +85,6 @@ class NodeImpl : public Node, public Widget::Delegate {
   CursorCapture cursor_captured_;
   CursorCapture cursor_captured_for_selection_;
 
-  int selection_id_ = -1;
   bool Selected();
 
  public:

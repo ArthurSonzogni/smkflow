@@ -6,11 +6,13 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED false)
 
 FetchContent_Declare(smk
   GIT_REPOSITORY https://github.com/ArthurSonzogni/smk
-  GIT_TAG e20124817944666a1fb02c621ae17ea2fb16aa1e
+  GIT_TAG 3edc5424628f2ada21f19799616184fb9e737a7c
 )
 
 FetchContent_Declare(fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt)
+  GIT_REPOSITORY https://github.com/fmtlib/fmt
+  GIT_TAG 2cac8a9
+)
 
 FetchContent_Declare(json
   #GIT_REPOSITORY https://github.com/nlohmann/json
@@ -33,6 +35,7 @@ endif()
 if(NOT fmt_POPULATED)
   message(STATUS "populate fmt > Start")
   FetchContent_Populate(fmt)
+  set(BUILD_SHARED_LIBS FALSE)
   message(STATUS "populate fmt > Done")
   add_subdirectory(
     ${fmt_SOURCE_DIR}
