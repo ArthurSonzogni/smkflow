@@ -26,7 +26,7 @@ class MenuEntryImpl : public LabelImpl, public ActionContext {
     auto position = cursor_ - Position();
     hover_ = (position.x >= 0.f && position.y >= 0.f &&
               position.x <= dimensions().x && position.y <= dimensions().y);
-    focused_ = hover_ && input->IsCursorHold();
+    focused_ = hover_ && input->IsCursorHeld();
     LabelImpl::Step(input, cursor_);
 
     if (hover_ && input->IsCursorPressed())

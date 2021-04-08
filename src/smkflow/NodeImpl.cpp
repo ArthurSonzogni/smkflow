@@ -179,7 +179,7 @@ void NodeImpl::Step(smk::Input* input, glm::vec2 cursor) {
     cursor_drag_point = position_ - cursor;
   }
 
-  if (!input->IsCursorHold())
+  if (!input->IsCursorHeld())
     return;
 
   if (!(cursor_captured_ || cursor_captured_for_selection_))

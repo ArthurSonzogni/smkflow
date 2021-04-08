@@ -64,17 +64,17 @@ void BoardImpl::Step(smk::RenderTarget* target, smk::Input* input) {
   // one on desktop?
   // TODO(arthursonzogni): Figure out why???
 #if __EMSCRIPTEN__
-  float zoom_increment = input->ScrollOffset().y * 0.001f;
+  float zoom_increment = input->scroll_offset().y * 0.001f;
 #else
-  float zoom_increment = input->ScrollOffset().y * 0.1f;
+  float zoom_increment = input->scroll_offset().y * 0.1f;
 #endif
 
-  view_shifting_ += (input->cursor() - target->dimension() * 0.5f) *
+  view_shifting_ += (input->cursor() - target->dimensions() * 0.5f) *
                     std::exp(view_zoom_) * (1.f - std::exp(zoom_increment));
   view_zoom_ += zoom_increment;
 
   cursor_ =
-      (input->cursor() - target->dimension() * 0.5f) * std::exp(view_zoom_) +
+      (input->cursor() - target->dimensions() * 0.5f) * std::exp(view_zoom_) +
       view_shifting_;
 
   if (input_->IsKeyReleased(GLFW_KEY_LEFT_CONTROL))
@@ -246,7 +246,7 @@ void BoardImpl::ReleaseView() {
 void BoardImpl::Draw(smk::RenderTarget* target) {
   auto view = smk::View();
   view.SetCenter(view_shifting_);
-  view.SetSize(target->dimension() * std::exp(view_zoom_));
+  view.SetSize(target->dimensions() * std::exp(view_zoom_));
   target->SetView(view);
 
   for (const auto& node : nodes_)
