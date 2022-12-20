@@ -6,7 +6,7 @@ set(FETCHCONTENT_UPDATES_DISCONNECTED false)
 
 FetchContent_Declare(smk
   GIT_REPOSITORY https://github.com/ArthurSonzogni/smk
-  GIT_TAG 7dc4f36051037d1fa36eacbaf7bf48d96da2b872
+  GIT_TAG 9e04a9c46af123a890244c4e2f5350a11150f25e
 )
 
 FetchContent_Declare(fmt

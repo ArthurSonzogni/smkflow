@@ -103,7 +103,6 @@ void BoardImpl::PushNodeAppart() {
   }
 
   // Find 2 nodes, try to move them away from each other.
-  int k = 0;
   std::vector<NodeImpl*> h_nodes;
   for (auto& it : nodes_)
     h_nodes.push_back(it.get());
@@ -121,7 +120,6 @@ void BoardImpl::PushNodeAppart() {
       glm::vec2 b1 = node_b->position() - glm::vec2(margin, margin);
       if (a2.x < b1.x)
         continue;
-      ++k;
       glm::vec2 b2 = b1 + node_b->dimension() + 2.f * glm::vec2(margin, margin);
       float dist = std::max(std::max(b1.x - a2.x, a1.x - b2.x),
                             std::max(b1.y - a2.y, a1.y - b2.y));
